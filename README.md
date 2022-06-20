@@ -1,10 +1,10 @@
-Lanzar la bdd (postgresql) mediante el docker compose
+Run bdd (postgresql) using docker-compose
 
 ```yaml
 docker-compose -f postgre.yml up
 ```
 
-Entrar al adminer y crear el esqeuma sysdig_padel
+use adminer (or console as you please) and then create sysdig_padel scheme
 
 ## TODO
 
