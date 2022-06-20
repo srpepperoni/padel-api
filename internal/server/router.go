@@ -1,6 +1,8 @@
 package router
 
 import (
+	"net/http"
+
 	datastore "fake.com/padel-api/pkg/db/postgres"
 	"github.com/gorilla/mux"
 
@@ -37,6 +39,9 @@ func NewRouter() *mux.Router {
 	playersHttp.MapPlayersRoutes(router, playersHandlers)
 	matchesHttp.MapMatchesRoutes(router, matchesHandlers)
 	templatesHttp.MapTemplatesRoutes(router, templatesHandlers)
+
+	router.PathPrefix("/internal/templates/resources/css").Handler(http.StripPrefix("/internal/templates/resources/css", http.FileServer(http.Dir("./internal/templates/resources/css"))))
+	router.PathPrefix("/internal/templates/resources/js").Handler(http.StripPrefix("/internal/templates/resources/js", http.FileServer(http.Dir("./internal/templates/resources/js"))))
 
 	return router
 }
