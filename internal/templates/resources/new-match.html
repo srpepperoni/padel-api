@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        function addMatch() {
+            let checkboxes = document.querySelectorAll('input[name="playerId"]:checked');
+
+            let values = [];
+            checkboxes.forEach((checkbox) => {
+                values.push(checkbox.value);
+            });
+            
+            if (values.length == 4) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "http://localhost:8000/match", true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({
+                    "playerOne": parseInt(values[0]),
+                    "playerTwo": parseInt(values[1]),
+                    "playerThree": parseInt(values[2]),
+                    "playerFour": parseInt(values[3]),
+                    "status": "pending",
+                    "result": "pending"
+                }));
+            } else {
+                alert("You have to select only 4 players")
+            }
+        }
+
+        function updateMatch(match) {
+            const url = "http://localhost:8000/match/" + match.matchId;
+            fetch(url, {
+                method : "PUT",
+                body : JSON.stringify({
+                    "playerOne": match.playerOne,
+                    "playerTwo": match.playerTwo,
+                    "playerThree": match.playerThree,
+                    "playerFour": match.playerFour,
+                    "status": "DONE",
+                    "result": "pending"
+                })
+            }).then(
+                response => response.text()
+            ).then(
+                html => console.log(html)
+            );
+        }
+      </script>
+</head> 
+<body>
+    <h1><a href="/">Padel APP</a></h1>
+	<h2>New Match</h2>
+	<p>Select four players for a match</p>
+    <table>
+        <tr>
+          <th>Player Name</th>
+          <th>Select</th>
+        </tr>
+        {{range .Players}}
+        <tr>
+          <td>{{.PlayerName}}</td>
+          <td><input class="inputPlayers" type="checkbox" id="{{.PlayerId}}" name="playerId" value="{{.PlayerId}}"></td>
+        </tr>
+        {{end}}
+    </table>
+    <input value="Create Match" type="submit" onclick="addMatch()">
+    <br/>
+    <table>
+        <thead>
+            <tr>
+                <th colspan="6">Matches</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Player One</td>
+                <th>Player Two</td>
+                <th>Player Three</td>
+                <th>Player Four</td>
+                <th>Result</td>
+                <th></th>
+                <th></th>
+            </tr>
+            {{range .Matches}}
+            <tr>
+                <th>{{.PlayerOne}}</th>
+                <th>{{.PlayerTwo}}</th>
+                <th>{{.PlayerThree}}</th>
+                <th>{{.PlayerFour}}</th>
+                <th>{{.Result}}</th>
+                <th><input value="Update" type="submit" onclick="updateMatch('{{.}}')"></th>
+                <th><input value="Delete" type="submit" onclick="deleteMatch('{{.MatchId}}')"></th>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</body>
+</html>
