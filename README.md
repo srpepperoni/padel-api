@@ -11,6 +11,7 @@ after that run from root:
 go run cmd/main/main.go
 ```
 
+
 ## TODO
 
 - [x] Form for adding new players
