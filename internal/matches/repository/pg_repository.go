@@ -5,6 +5,7 @@ import (
 
 	"fake.com/padel-api/internal/matches"
 	"fake.com/padel-api/internal/models"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -25,6 +26,33 @@ func (r *matchesRepo) Create(match *models.Match) (*models.Match, error) {
 	return match, nil
 }
 
+func (r *matchesRepo) Update(updatedMatch *models.Match, matchID int) (*models.Match, error) {
+	var match models.Match
+
+	if result := r.db.Find(&match, matchID); result.Error != nil {
+		fmt.Println(result.Error)
+		return nil, result.Error
+	}
+
+	match.Attrs = updatedMatch.Attrs
+
+	r.db.Save(&match)
+
+	return &match, nil
+}
+
+func (r *matchesRepo) Delete(matchId int) error {
+	var match models.Match
+
+	if result := r.db.Find(&match, matchId); result.Error != nil {
+		fmt.Println(result.Error)
+	}
+
+	r.db.Delete(&match)
+
+	return nil
+}
+
 func (r *matchesRepo) GetMatches() (*[]models.Match, error) {
 	var matches []models.Match
 
@@ -39,7 +67,7 @@ func (r *matchesRepo) GetMatches() (*[]models.Match, error) {
 func (r *matchesRepo) GetMatch(matchID int) (*models.Match, error) {
 	var match models.Match
 
-	if result := r.db.First(&match, matchID); result.Error != nil {
+	if result := r.db.Find(&match, matchID); result.Error != nil {
 		fmt.Println(result.Error)
 		return nil, result.Error
 	}
@@ -47,22 +75,8 @@ func (r *matchesRepo) GetMatch(matchID int) (*models.Match, error) {
 	return &match, nil
 }
 
-func (r *matchesRepo) Update(updatedMatch *models.Match, matchID int) (*models.Match, error) {
-	var match models.Match
-
-	if result := r.db.First(&match, matchID); result.Error != nil {
-		fmt.Println(result.Error)
-		return nil, result.Error
-	}
-
-	match.PlayerOne = updatedMatch.PlayerOne
-	match.PlayerTwo = updatedMatch.PlayerTwo
-	match.PlayerThree = updatedMatch.PlayerThree
-	match.PlayerFour = updatedMatch.PlayerFour
-	match.Status = updatedMatch.Status
-	match.Result = updatedMatch.Status
-
-	r.db.Save(&match)
-
-	return &match, nil
+func (r *matchesRepo) GetMatchesByTournamentId(tournmentId int) (*[]models.Match, error) {
+	matches := []models.Match{}
+	r.db.Find(&matches, datatypes.JSONQuery("attrs").Equals(tournmentId, "tournamentID"))
+	return &matches, nil
 }

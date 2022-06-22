@@ -5,10 +5,6 @@ import (
 	"fake.com/padel-api/internal/models"
 )
 
-const (
-	basePrefix = "api-matches:"
-)
-
 type matchesUC struct {
 	matchesRepo matches.Repository
 }
@@ -17,7 +13,10 @@ func NewMatchsUseCase(matchesRepo matches.Repository) matches.UseCase {
 	return &matchesUC{matchesRepo: matchesRepo}
 }
 
-// Create news
+func (u *matchesUC) Update(match *models.Match, matchID int) (*models.Match, error) {
+	return u.matchesRepo.Update(match, matchID)
+}
+
 func (u *matchesUC) Create(match *models.Match) (*models.Match, error) {
 	n, err := u.matchesRepo.Create(match)
 	if err != nil {
@@ -25,6 +24,10 @@ func (u *matchesUC) Create(match *models.Match) (*models.Match, error) {
 	}
 
 	return n, err
+}
+
+func (u *matchesUC) Delete(matchId int) error {
+	return u.matchesRepo.Delete(matchId)
 }
 
 func (u *matchesUC) GetMatches() (*[]models.Match, error) {
@@ -35,6 +38,6 @@ func (u *matchesUC) GetMatch(playerID int) (*models.Match, error) {
 	return u.matchesRepo.GetMatch(playerID)
 }
 
-func (u *matchesUC) Update(match *models.Match, matchID int) (*models.Match, error) {
-	return u.matchesRepo.Update(match, matchID)
+func (u *matchesUC) GetMatchesByTournamentId(tournamentId int) (*[]models.Match, error) {
+	return u.matchesRepo.GetMatchesByTournamentId(tournamentId)
 }

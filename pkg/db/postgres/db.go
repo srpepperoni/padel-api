@@ -20,7 +20,7 @@ func NewPostgresDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	err = db.AutoMigrate(&models.Player{}, &models.Match{})
+	err = db.AutoMigrate(&models.Player{}, &models.Match{}, &models.Tournament{})
 
 	return db, nil
 }

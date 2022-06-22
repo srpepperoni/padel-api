@@ -17,7 +17,6 @@ func NewPlayersUseCase(playersRepo players.Repository) players.UseCase {
 	return &playersUC{playersRepo: playersRepo}
 }
 
-// Create news
 func (u *playersUC) Create(player *models.Player) (*models.Player, error) {
 	n, err := u.playersRepo.Create(player)
 	if err != nil {
@@ -25,6 +24,14 @@ func (u *playersUC) Create(player *models.Player) (*models.Player, error) {
 	}
 
 	return n, err
+}
+
+func (u *playersUC) Update(player *models.Player, playerID int) (*models.Player, error) {
+	return u.playersRepo.Update(player, playerID)
+}
+
+func (u *playersUC) Delete(playerID int) error {
+	return u.playersRepo.Delete(playerID)
 }
 
 func (u *playersUC) GetPlayers() (*[]models.Player, error) {
