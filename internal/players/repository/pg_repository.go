@@ -24,6 +24,33 @@ func (r *playersRepo) Create(player *models.Player) (*models.Player, error) {
 	return player, nil
 }
 
+func (r *playersRepo) Update(updatedPlayer *models.Player, playerId int) (*models.Player, error) {
+	var player models.Player
+
+	if result := r.db.Find(&player, playerId); result.Error != nil {
+		fmt.Println(result.Error)
+		return nil, result.Error
+	}
+
+	player.Attrs = updatedPlayer.Attrs
+
+	r.db.Save(&player)
+
+	return &player, nil
+}
+
+func (r *playersRepo) Delete(playerId int) error {
+	var player models.Player
+
+	if result := r.db.Find(&player, playerId); result.Error != nil {
+		fmt.Println(result.Error)
+	}
+
+	r.db.Delete(&player)
+
+	return nil
+}
+
 func (r *playersRepo) GetPlayers() (*[]models.Player, error) {
 	var players []models.Player
 
