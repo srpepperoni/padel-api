@@ -3,6 +3,7 @@ package router
 import (
 	"net/http"
 
+	"fake.com/padel-api/config"
 	datastore "fake.com/padel-api/pkg/db/postgres"
 	"github.com/gorilla/mux"
 
@@ -24,14 +25,23 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger" // http-swagger middleware
 )
 
-func NewRouter() *mux.Router {
-	DB, _ := datastore.NewPostgresDB()
+const (
+	docsPath = "/docs"
+	docsDir  = "./docs"
+	cssPath  = "/internal/templates/resources/css"
+	cssDir   = "./internal/templates/resources/css"
+	jsPath   = "/internal/templates/resources/js"
+	jsDir    = "./internal/templates/resources/js"
+)
+
+func NewRouter(cfg *config.Config) *mux.Router {
+	db, _ := datastore.NewPostgresDB(cfg)
 	router := mux.NewRouter()
 
 	//Init repositories
-	playersRepo := playersRepository.NewPlayersRepository(DB)
-	matchesRepo := matchesRepository.NewMatchesRepository(DB)
-	tournamentsRepo := tournamentsRepository.NewTournamentsRepository(DB)
+	playersRepo := playersRepository.NewPlayersRepository(db)
+	matchesRepo := matchesRepository.NewMatchesRepository(db)
+	tournamentsRepo := tournamentsRepository.NewTournamentsRepository(db)
 
 	//Init useCases
 	playersUC := playersUseCase.NewPlayersUseCase(playersRepo)
@@ -50,18 +60,14 @@ func NewRouter() *mux.Router {
 	templatesHttp.MapTemplatesRoutes(router, templatesHandlers)
 	tournamentsHttp.MapTournamentsRoutes(router, tournamentsHandlers)
 
-	router.PathPrefix("/swagger").HandlerFunc(swaggerHandler) // swagger config
+	router.PathPrefix("/swagger").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		handler := httpSwagger.Handler(httpSwagger.URL(cfg.Server.Swagger))
+		handler.ServeHTTP(w, r)
+	}) // swagger config
 
-	router.PathPrefix("/docs").Handler(http.StripPrefix("/docs", http.FileServer(http.Dir("./docs")))) //swagger config statics path
-	router.PathPrefix("/internal/templates/resources/css").Handler(http.StripPrefix("/internal/templates/resources/css", http.FileServer(http.Dir("./internal/templates/resources/css"))))
-	router.PathPrefix("/internal/templates/resources/js").Handler(http.StripPrefix("/internal/templates/resources/js", http.FileServer(http.Dir("./internal/templates/resources/js"))))
+	router.PathPrefix(docsPath).Handler(http.StripPrefix(docsPath, http.FileServer(http.Dir(docsDir)))) //swagger config statics path
+	router.PathPrefix(cssPath).Handler(http.StripPrefix(cssPath, http.FileServer(http.Dir(cssDir))))
+	router.PathPrefix(jsPath).Handler(http.StripPrefix(jsPath, http.FileServer(http.Dir(jsDir))))
 
 	return router
-}
-
-// setting new url for swagger (default is docs.json)
-func swaggerHandler(w http.ResponseWriter, r *http.Request) {
-	swaggerFileUrl := "http://localhost:8000/docs/swagger.json"
-	handler := httpSwagger.Handler(httpSwagger.URL(swaggerFileUrl))
-	handler.ServeHTTP(w, r)
 }
