@@ -1,0 +1,626 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Golang Rest API for padel tournaments",
+        "title": "Go padel-api",
+        "contact": {
+            "name": "Jaime Yera",
+            "url": "https://github.com/srpepperoni",
+            "email": "jaimeyera@gmail.com"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/match": {
+            "post": {
+                "description": "create new match",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Matches"
+                ],
+                "summary": "Create new match",
+                "parameters": [
+                    {
+                        "description": "Match object for API",
+                        "name": "match",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MatchJSON"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Match"
+                        }
+                    }
+                }
+            }
+        },
+        "/match/{id}": {
+            "get": {
+                "description": "get match by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Matches"
+                ],
+                "summary": "get match by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Match ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Match"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "update match",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Matches"
+                ],
+                "summary": "Update match",
+                "parameters": [
+                    {
+                        "description": "Match object for API",
+                        "name": "player",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MatchJSON"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Match ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Match"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete match",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Matches"
+                ],
+                "summary": "Delete match by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Match ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Match"
+                        }
+                    }
+                }
+            }
+        },
+        "/matches": {
+            "get": {
+                "description": "get all matches",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Matches"
+                ],
+                "summary": "Get all matches",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Match"
+                        }
+                    }
+                }
+            }
+        },
+        "/player": {
+            "post": {
+                "description": "create new player",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Players"
+                ],
+                "summary": "Create new player",
+                "parameters": [
+                    {
+                        "description": "Player object for API",
+                        "name": "player",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PlayerJSON"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Player"
+                        }
+                    }
+                }
+            }
+        },
+        "/player/{id}": {
+            "get": {
+                "description": "get one player by Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Players"
+                ],
+                "summary": "Get Player by Id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Player ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Player"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "update player",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Players"
+                ],
+                "summary": "Update player",
+                "parameters": [
+                    {
+                        "description": "Player object for API",
+                        "name": "player",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PlayerJSON"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Player ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Player"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete player",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Players"
+                ],
+                "summary": "Delete player",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Player ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Player"
+                        }
+                    }
+                }
+            }
+        },
+        "/players": {
+            "get": {
+                "description": "get all players",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Players"
+                ],
+                "summary": "Get All Players",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Player"
+                        }
+                    }
+                }
+            }
+        },
+        "/tournament": {
+            "post": {
+                "description": "create new tournament",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tournament"
+                ],
+                "summary": "Create new tournament",
+                "parameters": [
+                    {
+                        "description": "Tournament object for API",
+                        "name": "tournament",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.TournamentJSON"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Tournament"
+                        }
+                    }
+                }
+            }
+        },
+        "/tournament/match/{id}": {
+            "get": {
+                "description": "get matches by tournamentId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Matches"
+                ],
+                "summary": "Get matches by tournamentId",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Match ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Match"
+                        }
+                    }
+                }
+            }
+        },
+        "/tournament/{id}": {
+            "get": {
+                "description": "get tournament by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tournament"
+                ],
+                "summary": "Get tournament by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Tournament ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Tournament"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "update tournament",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tournament"
+                ],
+                "summary": "Update tournament",
+                "parameters": [
+                    {
+                        "description": "Tournament object for API",
+                        "name": "tournament",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.TournamentJSON"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Tournament ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Tournament"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete tournament",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tournament"
+                ],
+                "summary": "delete tournament",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Tournament ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Tournament"
+                        }
+                    }
+                }
+            }
+        },
+        "/tournaments": {
+            "get": {
+                "description": "update tournament",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tournament"
+                ],
+                "summary": "Get All tournament",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Tournament"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.JSONMap": {
+            "type": "object",
+            "additionalProperties": true
+        },
+        "models.Match": {
+            "type": "object",
+            "properties": {
+                "attrs": {
+                    "$ref": "#/definitions/models.JSONMap"
+                },
+                "matchId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MatchJSON": {
+            "type": "object",
+            "properties": {
+                "coupleOne": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "coupleTwo": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tournamentId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Player": {
+            "type": "object",
+            "properties": {
+                "PlayerId": {
+                    "type": "integer"
+                },
+                "attrs": {
+                    "$ref": "#/definitions/models.JSONMap"
+                }
+            }
+        },
+        "models.PlayerJSON": {
+            "type": "object",
+            "properties": {
+                "lastName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "playerName": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Tournament": {
+            "type": "object",
+            "properties": {
+                "attrs": {
+                    "$ref": "#/definitions/models.JSONMap"
+                },
+                "tournamentID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TournamentJSON": {
+            "type": "object",
+            "properties": {
+                "actualRound": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "rounds": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

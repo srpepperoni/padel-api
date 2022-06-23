@@ -1,0 +1,411 @@
+definitions:
+  models.JSONMap:
+    additionalProperties: true
+    type: object
+  models.Match:
+    properties:
+      attrs:
+        $ref: '#/definitions/models.JSONMap'
+      matchId:
+        type: integer
+    type: object
+  models.MatchJSON:
+    properties:
+      coupleOne:
+        items:
+          type: integer
+        type: array
+      coupleTwo:
+        items:
+          type: integer
+        type: array
+      result:
+        items:
+          items:
+            type: integer
+          type: array
+        type: array
+      status:
+        type: string
+      tournamentId:
+        type: integer
+    type: object
+  models.Player:
+    properties:
+      PlayerId:
+        type: integer
+      attrs:
+        $ref: '#/definitions/models.JSONMap'
+    type: object
+  models.PlayerJSON:
+    properties:
+      lastName:
+        type: string
+      name:
+        type: string
+      playerName:
+        type: string
+    type: object
+  models.Tournament:
+    properties:
+      attrs:
+        $ref: '#/definitions/models.JSONMap'
+      tournamentID:
+        type: integer
+    type: object
+  models.TournamentJSON:
+    properties:
+      actualRound:
+        type: integer
+      description:
+        type: string
+      icon:
+        type: string
+      name:
+        type: string
+      rounds:
+        type: integer
+    type: object
+info:
+  contact:
+    email: jaimeyera@gmail.com
+    name: Jaime Yera
+    url: https://github.com/srpepperoni
+  description: Golang Rest API for padel tournaments
+  title: Go padel-api
+  version: "1.0"
+paths:
+  /match:
+    post:
+      consumes:
+      - application/json
+      description: create new match
+      parameters:
+      - description: Match object for API
+        in: body
+        name: match
+        required: true
+        schema:
+          $ref: '#/definitions/models.MatchJSON'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Match'
+      summary: Create new match
+      tags:
+      - Matches
+  /match/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete match
+      parameters:
+      - description: Match ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Match'
+      summary: Delete match by id
+      tags:
+      - Matches
+    get:
+      consumes:
+      - application/json
+      description: get match by id
+      parameters:
+      - description: Match ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Match'
+      summary: get match by id
+      tags:
+      - Matches
+    put:
+      consumes:
+      - application/json
+      description: update match
+      parameters:
+      - description: Match object for API
+        in: body
+        name: player
+        required: true
+        schema:
+          $ref: '#/definitions/models.MatchJSON'
+      - description: Match ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Match'
+      summary: Update match
+      tags:
+      - Matches
+  /matches:
+    get:
+      consumes:
+      - application/json
+      description: get all matches
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Match'
+      summary: Get all matches
+      tags:
+      - Matches
+  /player:
+    post:
+      consumes:
+      - application/json
+      description: create new player
+      parameters:
+      - description: Player object for API
+        in: body
+        name: player
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerJSON'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Player'
+      summary: Create new player
+      tags:
+      - Players
+  /player/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete player
+      parameters:
+      - description: Player ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Player'
+      summary: Delete player
+      tags:
+      - Players
+    get:
+      consumes:
+      - application/json
+      description: get one player by Id
+      parameters:
+      - description: Player ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Player'
+      summary: Get Player by Id
+      tags:
+      - Players
+    put:
+      consumes:
+      - application/json
+      description: update player
+      parameters:
+      - description: Player object for API
+        in: body
+        name: player
+        required: true
+        schema:
+          $ref: '#/definitions/models.PlayerJSON'
+      - description: Player ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Player'
+      summary: Update player
+      tags:
+      - Players
+  /players:
+    get:
+      consumes:
+      - application/json
+      description: get all players
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Player'
+      summary: Get All Players
+      tags:
+      - Players
+  /tournament:
+    post:
+      consumes:
+      - application/json
+      description: create new tournament
+      parameters:
+      - description: Tournament object for API
+        in: body
+        name: tournament
+        required: true
+        schema:
+          $ref: '#/definitions/models.TournamentJSON'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Tournament'
+      summary: Create new tournament
+      tags:
+      - Tournament
+  /tournament/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete tournament
+      parameters:
+      - description: Tournament ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Tournament'
+      summary: delete tournament
+      tags:
+      - Tournament
+    get:
+      consumes:
+      - application/json
+      description: get tournament by id
+      parameters:
+      - description: Tournament ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Tournament'
+      summary: Get tournament by id
+      tags:
+      - Tournament
+    put:
+      consumes:
+      - application/json
+      description: update tournament
+      parameters:
+      - description: Tournament object for API
+        in: body
+        name: tournament
+        required: true
+        schema:
+          $ref: '#/definitions/models.TournamentJSON'
+      - description: Tournament ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Tournament'
+      summary: Update tournament
+      tags:
+      - Tournament
+  /tournament/match/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get matches by tournamentId
+      parameters:
+      - description: Match ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Match'
+      summary: Get matches by tournamentId
+      tags:
+      - Matches
+  /tournaments:
+    get:
+      consumes:
+      - application/json
+      description: update tournament
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Tournament'
+      summary: Get All tournament
+      tags:
+      - Tournament
+swagger: "2.0"
