@@ -20,6 +20,8 @@ import (
 
 	templatesHttp "fake.com/padel-api/internal/templates/delivery/http"
 	templatesUseCase "fake.com/padel-api/internal/templates/usecase"
+
+	httpSwagger "github.com/swaggo/http-swagger" // http-swagger middleware
 )
 
 func NewRouter() *mux.Router {
@@ -48,8 +50,18 @@ func NewRouter() *mux.Router {
 	templatesHttp.MapTemplatesRoutes(router, templatesHandlers)
 	tournamentsHttp.MapTournamentsRoutes(router, tournamentsHandlers)
 
+	router.PathPrefix("/swagger").HandlerFunc(swaggerHandler) // swagger config
+
+	router.PathPrefix("/docs").Handler(http.StripPrefix("/docs", http.FileServer(http.Dir("./docs")))) //swagger config statics path
 	router.PathPrefix("/internal/templates/resources/css").Handler(http.StripPrefix("/internal/templates/resources/css", http.FileServer(http.Dir("./internal/templates/resources/css"))))
 	router.PathPrefix("/internal/templates/resources/js").Handler(http.StripPrefix("/internal/templates/resources/js", http.FileServer(http.Dir("./internal/templates/resources/js"))))
 
 	return router
+}
+
+// setting new url for swagger (default is docs.json)
+func swaggerHandler(w http.ResponseWriter, r *http.Request) {
+	swaggerFileUrl := "http://localhost:8000/docs/swagger.json"
+	handler := httpSwagger.Handler(httpSwagger.URL(swaggerFileUrl))
+	handler.ServeHTTP(w, r)
 }
