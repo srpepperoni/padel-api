@@ -3,6 +3,7 @@ package postgres
 import (
 	"log"
 
+	"fake.com/padel-api/config"
 	"fake.com/padel-api/internal/models"
 	_ "github.com/lib/pq"
 
@@ -10,8 +11,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewPostgresDB() (*gorm.DB, error) {
-	dbURL := "postgres://postgres:example@localhost:5432/sysdig_padel"
+func NewPostgresDB(cfg *config.Config) (*gorm.DB, error) {
+	dbURL := "postgres://" + cfg.Postgres.PostgresqlUser + ":" + cfg.Postgres.PostgresqlPassword + "@" + cfg.Postgres.PostgresqlHost + ":" + cfg.Postgres.PostgresqlPort + "/" + cfg.Postgres.PostgresqlDbname
 
 	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
 
@@ -21,6 +22,10 @@ func NewPostgresDB() (*gorm.DB, error) {
 	}
 
 	err = db.AutoMigrate(&models.Player{}, &models.Match{}, &models.Tournament{})
+
+	if err != nil {
+		panic(err)
+	}
 
 	return db, nil
 }
