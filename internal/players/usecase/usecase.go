@@ -3,6 +3,7 @@ package usecase
 import (
 	"fake.com/padel-api/internal/models"
 	"fake.com/padel-api/internal/players"
+	"k8s.io/klog/v2"
 )
 
 const (
@@ -20,6 +21,7 @@ func NewPlayersUseCase(playersRepo players.Repository) players.UseCase {
 func (u *playersUC) Create(player *models.Player) (*models.Player, error) {
 	n, err := u.playersRepo.Create(player)
 	if err != nil {
+		klog.Errorf("Error creating player: %v", err)
 		return nil, err
 	}
 

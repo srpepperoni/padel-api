@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"fmt"
+	"k8s.io/klog/v2"
 
 	"fake.com/padel-api/internal/models"
 	"fake.com/padel-api/internal/tournaments"
@@ -18,7 +18,7 @@ func NewTournamentsRepository(db *gorm.DB) tournaments.Repository {
 
 func (r *tournamentsRepo) Create(tournament *models.Tournament) (*models.Tournament, error) {
 	if result := r.db.Create(&tournament); result.Error != nil {
-		fmt.Println(result.Error)
+		klog.Errorf("Error creating tournament: %v", result.Error)
 		return nil, result.Error
 	}
 
@@ -29,7 +29,7 @@ func (r *tournamentsRepo) Update(updatedTournament *models.Tournament, tournamen
 	var tournament models.Tournament
 
 	if result := r.db.Find(&tournament, tournamentID); result.Error != nil {
-		fmt.Println(result.Error)
+		klog.Errorf("Error finding tournament: %v", result.Error)
 		return nil, result.Error
 	}
 
@@ -44,7 +44,7 @@ func (r *tournamentsRepo) Delete(tournamentId int) error {
 	var tournament models.Tournament
 
 	if result := r.db.Find(&tournament, tournamentId); result.Error != nil {
-		fmt.Println(result.Error)
+		klog.Errorf("Error finding tournament: %v", result.Error)
 	}
 
 	r.db.Delete(&tournament)
@@ -56,7 +56,7 @@ func (r *tournamentsRepo) GetTournaments() (*[]models.Tournament, error) {
 	var tournaments []models.Tournament
 
 	if result := r.db.Find(&tournaments); result.Error != nil {
-		fmt.Println(result.Error)
+		klog.Errorf("Error finding tournaments: %v", result.Error)
 		return nil, result.Error
 	}
 
@@ -67,7 +67,7 @@ func (r *tournamentsRepo) GetTournament(tournamentID int) (*models.Tournament, e
 	var tournament models.Tournament
 
 	if result := r.db.Find(&tournament, tournamentID); result.Error != nil {
-		fmt.Println(result.Error)
+		klog.Errorf("Error finding tournament: %v", result.Error)
 		return nil, result.Error
 	}
 

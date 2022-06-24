@@ -2,9 +2,8 @@ package http
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"log"
+	"k8s.io/klog/v2"
 	"net/http"
 	"strconv"
 
@@ -36,7 +35,7 @@ func (h tournamentsHandlers) Create(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
-		log.Fatalln(err)
+		klog.Fatalln(err)
 	}
 
 	var tournamentJSON models.TournamentJSON
@@ -44,8 +43,8 @@ func (h tournamentsHandlers) Create(w http.ResponseWriter, r *http.Request) {
 
 	tournament := models.NewTournament(tournamentJSON.Icon, tournamentJSON.Name, tournamentJSON.Description, tournamentJSON.Rounds, tournamentJSON.ActualRounds)
 
-	if _, err := h.tournamentsUC.Create(&tournament); err != nil {
-		fmt.Println(err)
+	if _, err = h.tournamentsUC.Create(&tournament); err != nil {
+		klog.Errorf("Error creating tournament: %v", err)
 	}
 
 	w.Header().Add("Content-Type", "application/json")
@@ -71,7 +70,7 @@ func (h tournamentsHandlers) Update(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
-		log.Fatalln(err)
+		klog.Errorf("Error reading body: %v", err)
 	}
 
 	var tournamentJSON models.TournamentJSON
@@ -99,7 +98,10 @@ func (h tournamentsHandlers) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
-	h.tournamentsUC.Delete(id)
+	err := h.tournamentsUC.Delete(id)
+	if err != nil {
+		klog.Errorf("Error deleting tournament: %v", err)
+	}
 
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -119,7 +121,7 @@ func (h tournamentsHandlers) GetTournaments(w http.ResponseWriter, r *http.Reque
 	var err error
 
 	if tournaments, err = h.tournamentsUC.GetTournaments(); err != nil {
-		fmt.Println(err)
+		klog.Errorf("Error getting tournaments: %v", err)
 	}
 
 	w.Header().Add("Content-Type", "application/json")
@@ -145,7 +147,7 @@ func (h tournamentsHandlers) GetTournament(w http.ResponseWriter, r *http.Reques
 	var err error
 
 	if player, err = h.tournamentsUC.GetTournament(id); err != nil {
-		fmt.Println(err)
+		klog.Errorf("Error getting tournament: %v", err)
 	}
 
 	w.Header().Add("Content-Type", "application/json")

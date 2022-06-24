@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"fmt"
+	"k8s.io/klog/v2"
 
 	"fake.com/padel-api/internal/matches"
 	"fake.com/padel-api/internal/models"
@@ -19,7 +19,7 @@ func NewMatchesRepository(db *gorm.DB) matches.Repository {
 
 func (r *matchesRepo) Create(match *models.Match) (*models.Match, error) {
 	if result := r.db.Create(&match); result.Error != nil {
-		fmt.Println(result.Error)
+		klog.Errorf("Error creating match: %v", result.Error)
 		return nil, result.Error
 	}
 
@@ -30,7 +30,7 @@ func (r *matchesRepo) Update(updatedMatch *models.Match, matchID int) (*models.M
 	var match models.Match
 
 	if result := r.db.Find(&match, matchID); result.Error != nil {
-		fmt.Println(result.Error)
+		klog.Errorf("Error updating match: %v", result.Error)
 		return nil, result.Error
 	}
 
@@ -45,7 +45,7 @@ func (r *matchesRepo) Delete(matchId int) error {
 	var match models.Match
 
 	if result := r.db.Find(&match, matchId); result.Error != nil {
-		fmt.Println(result.Error)
+		klog.Errorf("Error deleting match: %v", result.Error)
 	}
 
 	r.db.Delete(&match)
@@ -57,7 +57,7 @@ func (r *matchesRepo) GetMatches() (*[]models.Match, error) {
 	var matches []models.Match
 
 	if result := r.db.Find(&matches); result.Error != nil {
-		fmt.Println(result.Error)
+		klog.Errorf("Error getting matches: %v", result.Error)
 		return nil, result.Error
 	}
 
@@ -68,7 +68,7 @@ func (r *matchesRepo) GetMatch(matchID int) (*models.Match, error) {
 	var match models.Match
 
 	if result := r.db.Find(&match, matchID); result.Error != nil {
-		fmt.Println(result.Error)
+		klog.Errorf("Error getting match: %v", result.Error)
 		return nil, result.Error
 	}
 

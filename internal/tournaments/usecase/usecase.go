@@ -3,6 +3,7 @@ package usecase
 import (
 	"fake.com/padel-api/internal/models"
 	"fake.com/padel-api/internal/tournaments"
+	"k8s.io/klog/v2"
 )
 
 type tournamentsUC struct {
@@ -17,6 +18,7 @@ func NewTournamentsUseCase(tournamentsRepo tournaments.Repository) tournaments.U
 func (u *tournamentsUC) Create(tournament *models.Tournament) (*models.Tournament, error) {
 	n, err := u.tournamentsRepo.Create(tournament)
 	if err != nil {
+		klog.Errorf("Error creating tournament: %v", err)
 		return nil, err
 	}
 

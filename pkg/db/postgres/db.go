@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"log"
+	"k8s.io/klog/v2"
 	"os"
 
 	"fake.com/padel-api/config"
@@ -22,14 +22,14 @@ func NewPostgresDB(cfg *config.Config) (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
 
 	if err != nil {
-		log.Fatalln(err)
+		klog.Fatalln(err)
 		return nil, err
 	}
 
 	err = db.AutoMigrate(&models.Player{}, &models.Match{}, &models.Tournament{})
 
 	if err != nil {
-		panic(err)
+		klog.Fatal(err)
 	}
 
 	return db, nil

@@ -4,7 +4,7 @@ import (
 	"fake.com/padel-api/internal/models"
 )
 
-// News Repository
+// Repository News Repository
 type Repository interface {
 	Create(player *models.Player) (*models.Player, error)
 	Update(player *models.Player, playerId int) (*models.Player, error)
