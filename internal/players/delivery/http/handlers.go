@@ -2,9 +2,8 @@ package http
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"log"
+	"k8s.io/klog/v2"
 	"net/http"
 	"strconv"
 
@@ -35,7 +34,7 @@ func (h playersHandlers) Create(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
-		log.Fatalln(err)
+		klog.Fatalln(err)
 	}
 
 	var playerJSON models.PlayerJSON
@@ -43,8 +42,8 @@ func (h playersHandlers) Create(w http.ResponseWriter, r *http.Request) {
 
 	player := models.NewPlayer(playerJSON.Name, playerJSON.LastName, playerJSON.PlayerName)
 
-	if _, err := h.playersUC.Create(&player); err != nil {
-		fmt.Println(err)
+	if _, err = h.playersUC.Create(&player); err != nil {
+		klog.Errorf("Error creating player: %v", err)
 	}
 
 	w.Header().Add("Content-Type", "application/json")
@@ -70,7 +69,7 @@ func (h playersHandlers) Update(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
-		log.Fatalln(err)
+		klog.Fatalln(err)
 	}
 
 	var updatedPlayer models.PlayerJSON
@@ -79,6 +78,9 @@ func (h playersHandlers) Update(w http.ResponseWriter, r *http.Request) {
 	player := models.NewPlayer(updatedPlayer.Name, updatedPlayer.LastName, updatedPlayer.PlayerName)
 
 	_, err = h.playersUC.Update(&player, id)
+	if err != nil {
+		klog.Errorf("Error updating player: %v", err)
+	}
 
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -98,7 +100,10 @@ func (h playersHandlers) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
-	h.playersUC.Delete(id)
+	err := h.playersUC.Delete(id)
+	if err != nil {
+		klog.Errorf("Error deleting player: %v", err)
+	}
 
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -118,7 +123,7 @@ func (h playersHandlers) GetPlayers(w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	if players, err = h.playersUC.GetPlayers(); err != nil {
-		fmt.Println(err)
+		klog.Errorf("Error getting players: %v", err)
 	}
 
 	w.Header().Add("Content-Type", "application/json")
@@ -144,7 +149,7 @@ func (h playersHandlers) GetPlayer(w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	if player, err = h.playersUC.GetPlayer(id); err != nil {
-		fmt.Println(err)
+		klog.Errorf("Error getting player: %v", err)
 	}
 
 	w.Header().Add("Content-Type", "application/json")

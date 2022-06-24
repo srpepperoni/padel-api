@@ -45,7 +45,7 @@ func NewRouter(cfg *config.Config) *mux.Router {
 
 	//Init useCases
 	playersUC := playersUseCase.NewPlayersUseCase(playersRepo)
-	matchesUC := matchesUseCase.NewMatchsUseCase(matchesRepo)
+	matchesUC := matchesUseCase.NewMatchUseCase(matchesRepo)
 	templatesUC := templatesUseCase.NewTemplatesUseCase(playersRepo, matchesRepo)
 	tournamentsUC := tournamentsUseCase.NewTournamentsUseCase(tournamentsRepo)
 

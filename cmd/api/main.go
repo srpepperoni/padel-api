@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"log"
+	"k8s.io/klog/v2"
 	"net/http"
 	"os"
 
@@ -18,19 +17,21 @@ import (
 // @contact.url https://github.com/srpepperoni
 // @contact.email jaimeyera@gmail.com
 func main() {
+	klog.InitFlags(nil)
+	defer klog.Flush()
 	configPath := utils.GetConfigPath(os.Getenv("config"))
 	cfgFile, err := config.LoadConfig(configPath)
 
 	if err != nil {
-		log.Fatalf("LoadConfig: %v", err)
+		klog.Fatal("LoadConfig: %v", err)
 	}
 
 	cfg, err := config.ParseConfig(cfgFile)
 
 	if err != nil {
-		log.Fatalf("ParseConfig: %v", err)
+		klog.Fatalf("ParseConfig: %v", err)
 	}
 
-	fmt.Printf("Server at %s", cfg.Server.Port)
-	log.Fatal(http.ListenAndServe(cfg.Server.Port, router.NewRouter(cfg)))
+	klog.Infof("Server at %s", cfg.Server.Port)
+	klog.Fatal(http.ListenAndServe(cfg.Server.Port, router.NewRouter(cfg)))
 }

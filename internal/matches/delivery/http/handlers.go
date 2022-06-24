@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
+	"k8s.io/klog/v2"
 	"net/http"
 	"strconv"
 
@@ -36,7 +36,7 @@ func (h matchesHandlers) Create(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
-		log.Fatalln(err)
+		klog.Fatalln(err)
 	}
 
 	var matchJSON models.MatchJSON
@@ -52,8 +52,8 @@ func (h matchesHandlers) Create(w http.ResponseWriter, r *http.Request) {
 
 	match := models.NewMatch(matchJSON.CoupleOne[0], matchJSON.CoupleOne[1], matchJSON.CoupleTwo[0], matchJSON.CoupleTwo[1], matchJSON.Status, matchJSON.TournamentID, result)
 
-	if _, err := h.matchesUC.Create(&match); err != nil {
-		fmt.Println(err)
+	if _, err = h.matchesUC.Create(&match); err != nil {
+		klog.Errorf("Error creating match: %v", err)
 	}
 
 	w.Header().Add("Content-Type", "application/json")
@@ -79,7 +79,7 @@ func (h matchesHandlers) Update(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
-		log.Fatalln(err)
+		klog.Fatalln(err)
 	}
 
 	var matchJSON models.MatchJSON
@@ -186,7 +186,7 @@ func (h matchesHandlers) GetMatchesByTournamentId(w http.ResponseWriter, r *http
 	var err error
 
 	if matches, err = h.matchesUC.GetMatchesByTournamentId(id); err != nil {
-		fmt.Println(err)
+		klog.Errorf("Error getting matches by tournamentId: %v", err)
 	}
 
 	w.Header().Add("Content-Type", "application/json")

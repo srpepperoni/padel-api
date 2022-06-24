@@ -11,11 +11,13 @@ require (
 	gorm.io/datatypes v1.0.6
 	gorm.io/driver/postgres v1.3.7
 	gorm.io/gorm v1.23.6
+	k8s.io/klog/v2 v2.70.0
 )
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
+	github.com/go-logr/logr v1.2.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.20.0 // indirect
 	github.com/go-openapi/spec v0.20.6 // indirect

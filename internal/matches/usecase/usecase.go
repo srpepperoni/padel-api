@@ -9,7 +9,7 @@ type matchesUC struct {
 	matchesRepo matches.Repository
 }
 
-func NewMatchsUseCase(matchesRepo matches.Repository) matches.UseCase {
+func NewMatchUseCase(matchesRepo matches.Repository) matches.UseCase {
 	return &matchesUC{matchesRepo: matchesRepo}
 }
 
