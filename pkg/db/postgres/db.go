@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"log"
+	"os"
 
 	"fake.com/padel-api/config"
 	"fake.com/padel-api/internal/models"
@@ -12,7 +13,11 @@ import (
 )
 
 func NewPostgresDB(cfg *config.Config) (*gorm.DB, error) {
-	dbURL := "postgres://" + cfg.Postgres.PostgresqlUser + ":" + cfg.Postgres.PostgresqlPassword + "@" + cfg.Postgres.PostgresqlHost + ":" + cfg.Postgres.PostgresqlPort + "/" + cfg.Postgres.PostgresqlDbname
+	dbURL := os.Getenv("DATABASE_URL")
+	if dbURL == "" {
+		dbURL = "postgres://" + cfg.Postgres.PostgresqlUser + ":" + cfg.Postgres.PostgresqlPassword + "@" +
+			cfg.Postgres.PostgresqlHost + ":" + cfg.Postgres.PostgresqlPort + "/" + cfg.Postgres.PostgresqlDbname
+	}
 
 	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
 

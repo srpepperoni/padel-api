@@ -1,6 +1,6 @@
 package utils
 
-// Get config path for local or docker
+// GetConfigPath Get config path for local or docker
 func GetConfigPath(configPath string) string {
 	if configPath == "docker" {
 		return "./config/config-docker"

@@ -1,7 +1,7 @@
 Run bdd (postgresql) using docker-compose
 
 ```yaml
-docker-compose -f docker-compopse.yml up
+docker-compose -f deploy/docker-compose.yml up
 ```
 
 Use adminer (or console as you please) and then create api_padel scheme
