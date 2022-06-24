@@ -11,6 +11,7 @@ import (
 )
 
 func NewPostgresDB() (*gorm.DB, error) {
+	//TODO: make the user and password configurable
 	dbURL := "postgres://postgres:example@localhost:5432/sysdig_padel"
 
 	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})

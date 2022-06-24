@@ -23,13 +23,16 @@ import (
 )
 
 func NewRouter() *mux.Router {
-	DB, _ := datastore.NewPostgresDB()
+	db, err := datastore.NewPostgresDB()
+	if err != nil {
+		panic(err)
+	}
 	router := mux.NewRouter()
 
 	//Init repositories
-	playersRepo := playersRepository.NewPlayersRepository(DB)
-	matchesRepo := matchesRepository.NewMatchesRepository(DB)
-	tournamentsRepo := tournamentsRepository.NewTournamentsRepository(DB)
+	playersRepo := playersRepository.NewPlayersRepository(db)
+	matchesRepo := matchesRepository.NewMatchesRepository(db)
+	tournamentsRepo := tournamentsRepository.NewTournamentsRepository(db)
 
 	//Init useCases
 	playersUC := playersUseCase.NewPlayersUseCase(playersRepo)
@@ -48,8 +51,10 @@ func NewRouter() *mux.Router {
 	templatesHttp.MapTemplatesRoutes(router, templatesHandlers)
 	tournamentsHttp.MapTournamentsRoutes(router, tournamentsHandlers)
 
-	router.PathPrefix("/internal/templates/resources/css").Handler(http.StripPrefix("/internal/templates/resources/css", http.FileServer(http.Dir("./internal/templates/resources/css"))))
-	router.PathPrefix("/internal/templates/resources/js").Handler(http.StripPrefix("/internal/templates/resources/js", http.FileServer(http.Dir("./internal/templates/resources/js"))))
+	css := "/internal/templates/resources/css"
+	js := "/internal/templates/resources/js"
+	router.PathPrefix(css).Handler(http.StripPrefix(css, http.FileServer(http.Dir("."+css))))
+	router.PathPrefix(js).Handler(http.StripPrefix(js, http.FileServer(http.Dir("."+js))))
 
 	return router
 }

@@ -1,7 +1,7 @@
 Run bdd (postgresql) using docker-compose
 
 ```yaml
-docker-compose -f postgre.yml up
+docker-compose -f deploy/docker-compose.yml up
 ```
 
 use adminer (or console as you please) and then create sysdig_padel scheme
