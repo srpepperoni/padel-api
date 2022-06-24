@@ -21,6 +21,15 @@ func NewMatchesHandlers(matchesUC matches.UseCase) matches.Handlers {
 	return &matchesHandlers{matchesUC: matchesUC}
 }
 
+// Create
+// @Summary Create new match
+// @Description create new match
+// @Tags Matches
+// @Accept  json
+// @Param match body models.MatchJSON true "Match object for API"
+// @Produce  json
+// @Success 201 {object} models.Match
+// @Router /match [post]
 func (h matchesHandlers) Create(w http.ResponseWriter, r *http.Request) {
 	// Read to request body
 	defer r.Body.Close()
@@ -52,6 +61,16 @@ func (h matchesHandlers) Create(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Created")
 }
 
+// Update
+// @Summary Update match
+// @Description update match
+// @Tags Matches
+// @Accept  json
+// @Param player body models.MatchJSON true "Match object for API"
+// @Param id path int true "Match ID"
+// @Produce  json
+// @Success 201 {object} models.Match
+// @Router /match/{id} [put]
 func (h matchesHandlers) Update(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
@@ -83,6 +102,15 @@ func (h matchesHandlers) Update(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Updated")
 }
 
+// Delete
+// @Summary Delete match by id
+// @Description delete match
+// @Tags Matches
+// @Accept  json
+// @Param id path int true "Match ID"
+// @Produce  json
+// @Success 201 {object} models.Match
+// @Router /match/{id} [delete]
 func (h matchesHandlers) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
@@ -94,6 +122,14 @@ func (h matchesHandlers) Delete(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Deleted")
 }
 
+// Get All
+// @Summary Get all matches
+// @Description get all matches
+// @Tags Matches
+// @Accept  json
+// @Produce  json
+// @Success 201 {object} models.Match
+// @Router /matches [get]
 func (h matchesHandlers) GetMatches(w http.ResponseWriter, r *http.Request) {
 	var matches *[]models.Match
 	var err error
@@ -107,6 +143,15 @@ func (h matchesHandlers) GetMatches(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&matches)
 }
 
+// Get Match
+// @Summary get match by id
+// @Description get match by id
+// @Tags Matches
+// @Accept  json
+// @Param id path int true "Match ID"
+// @Produce  json
+// @Success 201 {object} models.Match
+// @Router /match/{id} [get]
 func (h matchesHandlers) GetMatch(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
@@ -124,6 +169,15 @@ func (h matchesHandlers) GetMatch(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(player)
 }
 
+// Get Matches by TournamentId
+// @Summary Get matches by tournamentId
+// @Description get matches by tournamentId
+// @Tags Matches
+// @Accept  json
+// @Param id path int true "Match ID"
+// @Produce  json
+// @Success 201 {object} models.Match
+// @Router /tournament/match/{id} [get]
 func (h matchesHandlers) GetMatchesByTournamentId(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])

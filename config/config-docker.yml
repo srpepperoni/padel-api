@@ -1,0 +1,10 @@
+server:
+  Port: :8000
+  Swagger: http://localhost:8000/docs/swagger.json
+
+postgres:
+  PostgresqlHost: localhost
+  PostgresqlPort: 5432
+  PostgresqlUser: postgres
+  PostgresqlPassword: example
+  PostgresqlDbname: api_padel

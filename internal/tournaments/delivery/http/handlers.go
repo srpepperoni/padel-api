@@ -21,6 +21,15 @@ func NewTournamentsHandlers(tournamentsUC tournaments.UseCase) tournaments.Handl
 	return &tournamentsHandlers{tournamentsUC: tournamentsUC}
 }
 
+// Create
+// @Summary Create new tournament
+// @Description create new tournament
+// @Tags Tournament
+// @Accept  json
+// @Param tournament body models.TournamentJSON true "Tournament object for API"
+// @Produce  json
+// @Success 201 {object} models.Tournament
+// @Router /tournament [post]
 func (h tournamentsHandlers) Create(w http.ResponseWriter, r *http.Request) {
 	// Read to request body
 	defer r.Body.Close()
@@ -44,6 +53,16 @@ func (h tournamentsHandlers) Create(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Created")
 }
 
+// Update
+// @Summary Update tournament
+// @Description update tournament
+// @Tags Tournament
+// @Accept  json
+// @Param tournament body models.TournamentJSON true "Tournament object for API"
+// @Param id path int true "Tournament ID"
+// @Produce  json
+// @Success 201 {object} models.Tournament
+// @Router /tournament/{id} [put]
 func (h tournamentsHandlers) Update(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
@@ -67,6 +86,15 @@ func (h tournamentsHandlers) Update(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Updated")
 }
 
+// Delete
+// @Summary delete tournament
+// @Description delete tournament
+// @Tags Tournament
+// @Accept  json
+// @Param id path int true "Tournament ID"
+// @Produce  json
+// @Success 201 {object} models.Tournament
+// @Router /tournament/{id} [delete]
 func (h tournamentsHandlers) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
@@ -78,6 +106,14 @@ func (h tournamentsHandlers) Delete(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Deleted")
 }
 
+// Get all
+// @Summary Get All tournament
+// @Description update tournament
+// @Tags Tournament
+// @Accept  json
+// @Produce  json
+// @Success 201 {object} models.Tournament
+// @Router /tournaments [get]
 func (h tournamentsHandlers) GetTournaments(w http.ResponseWriter, r *http.Request) {
 	var tournaments *[]models.Tournament
 	var err error
@@ -91,6 +127,15 @@ func (h tournamentsHandlers) GetTournaments(w http.ResponseWriter, r *http.Reque
 	json.NewEncoder(w).Encode(&tournaments)
 }
 
+// Get
+// @Summary Get tournament by id
+// @Description get tournament by id
+// @Tags Tournament
+// @Accept  json
+// @Param id path int true "Tournament ID"
+// @Produce  json
+// @Success 201 {object} models.Tournament
+// @Router /tournament/{id} [get]
 func (h tournamentsHandlers) GetTournament(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
