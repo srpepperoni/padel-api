@@ -45,3 +45,6 @@ go.work
 
 # Ignore code-workspaces
 *.code-workspace
+
+# Default ignored files
+.idea
