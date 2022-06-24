@@ -4,18 +4,22 @@ version: '3.1'
 services:
 
   db:
+    container_name: postgres
     image: postgres
     restart: always
     environment:
       POSTGRES_PASSWORD: example
+      POSTGRES_DB: api_padel
     ports:
-      - 5432:5432
+      - "5432:5432"
 
-  adminer:
-    image: adminer
+  padel-api:
+    container_name: padel-api
+    image: harbor.internal.sysdig-demo.zone/public/padel-api
     restart: always
+    environment:
+      DATABASE_URL: "postgres://postgres:example@db/api_padel?sslmode=disable"
     ports:
-      - 8081:8080
-
+      - "8000:8000"
 # docker-compose -f stack.yml up
 # user:postgres pass: example
