@@ -18,6 +18,7 @@ func NewMatchesRepository(db *gorm.DB) matches.Repository {
 }
 
 func (r *matchesRepo) Create(match *models.Match) (*models.Match, error) {
+	klog.Info("CREATE REPO MATCH")
 	if result := r.db.Create(&match); result.Error != nil {
 		klog.Errorf("Error creating match: %v", result.Error)
 		return nil, result.Error

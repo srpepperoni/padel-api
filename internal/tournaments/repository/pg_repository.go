@@ -52,7 +52,7 @@ func (r *tournamentsRepo) Delete(tournamentId int) error {
 	return nil
 }
 
-func (r *tournamentsRepo) GetTournaments() (*[]models.Tournament, error) {
+func (r *tournamentsRepo) GetTournaments() ([]models.Tournament, error) {
 	var tournaments []models.Tournament
 
 	if result := r.db.Find(&tournaments); result.Error != nil {
@@ -60,7 +60,7 @@ func (r *tournamentsRepo) GetTournaments() (*[]models.Tournament, error) {
 		return nil, result.Error
 	}
 
-	return &tournaments, nil
+	return tournaments, nil
 }
 
 func (r *tournamentsRepo) GetTournament(tournamentID int) (*models.Tournament, error) {

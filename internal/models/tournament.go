@@ -6,6 +6,7 @@ type TournamentJSON struct {
 	Description  string `json:"description"`
 	Rounds       int    `json:"rounds"`
 	ActualRounds int    `json:"actualRound"`
+	Players      []int  `json:"players"`
 }
 
 type Tournament struct {
@@ -13,13 +14,25 @@ type Tournament struct {
 	Attrs        JSONMap
 }
 
-func NewTournament(icon string, name string, description string, rounds int, actualRound int) *Tournament {
+type PlayerT struct {
+	PlayerID     int // ID Player
+	PlayerScore  int // Actual Player's score in this tournament
+	RoundsPlayed int
+	Couples      []int // ID Players this player already play with
+}
+
+func NewPlayerT(playerID int) *PlayerT {
+	return &PlayerT{PlayerID: playerID, PlayerScore: 0, RoundsPlayed: 0, Couples: []int{}}
+}
+
+func NewTournament(icon string, name string, description string, rounds int, actualRound int, players []PlayerT) *Tournament {
 	tournamentAttrs := map[string]interface{}{
 		"icon":        icon,
 		"name":        name,
 		"description": description,
 		"rounds":      rounds,
 		"actualRound": actualRound,
+		"players":     players,
 	}
 
 	return &Tournament{Attrs: JSONMap(tournamentAttrs)}
@@ -45,6 +58,11 @@ func (t *Tournament) GetActualRound() int {
 	return attrs["actualRound"].(int)
 }
 
+func (t *Tournament) GetPlayers() []PlayerT {
+	attrs := t.Attrs
+	return attrs["players"].([]PlayerT)
+}
+
 func (t *Tournament) SetName(name string) {
 	attrs := t.Attrs
 	attrs["name"] = name
@@ -66,5 +84,11 @@ func (t *Tournament) SetRounds(rounds int) {
 func (t *Tournament) SetActualRound(actualRound int) {
 	attrs := t.Attrs
 	attrs["actualRound"] = actualRound
+	t.Attrs = JSONMap(attrs)
+}
+
+func (t *Tournament) SetPlayers(players []PlayerT) {
+	attrs := t.Attrs
+	attrs["players"] = players
 	t.Attrs = JSONMap(attrs)
 }
