@@ -2,6 +2,9 @@ package config
 
 import (
 	"errors"
+	"os"
+
+	"fake.com/padel-api/pkg/utils"
 	"github.com/spf13/viper"
 	"k8s.io/klog/v2"
 )
@@ -55,4 +58,23 @@ func ParseConfig(v *viper.Viper) (*Config, error) {
 	}
 
 	return &c, nil
+}
+
+func GetConfig() (*Config, error) {
+	configPath := utils.GetConfigPath(os.Getenv("config"))
+	cfgFile, err := LoadConfig(configPath)
+
+	if err != nil {
+		klog.Fatal("LoadConfig: %v", err)
+		return nil, err
+	}
+
+	cfg, err := ParseConfig(cfgFile)
+
+	if err != nil {
+		klog.Fatalf("ParseConfig: %v", err)
+		return nil, err
+	}
+
+	return cfg, nil
 }
