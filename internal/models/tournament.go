@@ -13,7 +13,7 @@ type Tournament struct {
 	Attrs        JSONMap
 }
 
-func NewTournament(icon string, name string, description string, rounds int, actualRound int) Tournament {
+func NewTournament(icon string, name string, description string, rounds int, actualRound int) *Tournament {
 	tournamentAttrs := map[string]interface{}{
 		"icon":        icon,
 		"name":        name,
@@ -22,7 +22,7 @@ func NewTournament(icon string, name string, description string, rounds int, act
 		"actualRound": actualRound,
 	}
 
-	return Tournament{Attrs: JSONMap(tournamentAttrs)}
+	return &Tournament{Attrs: JSONMap(tournamentAttrs)}
 }
 
 func (t *Tournament) GetName() string {

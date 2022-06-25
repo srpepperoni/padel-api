@@ -1,9 +1,10 @@
 package usecase
 
 import (
+	"encoding/json"
+
 	"fake.com/padel-api/internal/models"
 	"fake.com/padel-api/internal/tournaments"
-	"k8s.io/klog/v2"
 )
 
 type tournamentsUC struct {
@@ -15,17 +16,21 @@ func NewTournamentsUseCase(tournamentsRepo tournaments.Repository) tournaments.U
 }
 
 // Create news
-func (u *tournamentsUC) Create(tournament *models.Tournament) (*models.Tournament, error) {
-	n, err := u.tournamentsRepo.Create(tournament)
-	if err != nil {
-		klog.Errorf("Error creating tournament: %v", err)
-		return nil, err
-	}
+func (u *tournamentsUC) Create(body []byte) (*models.Tournament, error) {
+	var tournamentJSON models.TournamentJSON
+	json.Unmarshal(body, &tournamentJSON)
 
-	return n, err
+	tournament := models.NewTournament(tournamentJSON.Icon, tournamentJSON.Name, tournamentJSON.Description, tournamentJSON.Rounds, tournamentJSON.ActualRounds)
+
+	return u.tournamentsRepo.Create(tournament)
 }
 
-func (u *tournamentsUC) Update(tournament *models.Tournament, tournamentID int) (*models.Tournament, error) {
+func (u *tournamentsUC) Update(body []byte, tournamentID int) (*models.Tournament, error) {
+	var tournamentJSON models.TournamentJSON
+	json.Unmarshal(body, &tournamentJSON)
+
+	tournament := models.NewTournament(tournamentJSON.Icon, tournamentJSON.Name, tournamentJSON.Description, tournamentJSON.Rounds, tournamentJSON.ActualRounds)
+
 	return u.tournamentsRepo.Update(tournament, tournamentID)
 }
 

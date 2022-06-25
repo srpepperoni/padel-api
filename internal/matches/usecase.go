@@ -5,8 +5,8 @@ import (
 )
 
 type UseCase interface {
-	Create(match *models.Match) (*models.Match, error)
-	Update(match *models.Match, matchID int) (*models.Match, error)
+	Create(body []byte) (*models.Match, error)
+	Update(body []byte, matchID int) (*models.Match, error)
 	Delete(matchID int) error
 	GetMatches() (*[]models.Match, error)
 	GetMatch(matchID int) (*models.Match, error)

@@ -3,9 +3,10 @@ package http
 import (
 	"encoding/json"
 	"io/ioutil"
-	"k8s.io/klog/v2"
 	"net/http"
 	"strconv"
+
+	"k8s.io/klog/v2"
 
 	"fake.com/padel-api/internal/models"
 	"fake.com/padel-api/internal/players"
@@ -37,12 +38,7 @@ func (h playersHandlers) Create(w http.ResponseWriter, r *http.Request) {
 		klog.Fatalln(err)
 	}
 
-	var playerJSON models.PlayerJSON
-	json.Unmarshal(body, &playerJSON)
-
-	player := models.NewPlayer(playerJSON.Name, playerJSON.LastName, playerJSON.PlayerName)
-
-	if _, err = h.playersUC.Create(&player); err != nil {
+	if _, err = h.playersUC.Create(body); err != nil {
 		klog.Errorf("Error creating player: %v", err)
 	}
 
@@ -72,12 +68,7 @@ func (h playersHandlers) Update(w http.ResponseWriter, r *http.Request) {
 		klog.Fatalln(err)
 	}
 
-	var updatedPlayer models.PlayerJSON
-	json.Unmarshal(body, &updatedPlayer)
-
-	player := models.NewPlayer(updatedPlayer.Name, updatedPlayer.LastName, updatedPlayer.PlayerName)
-
-	_, err = h.playersUC.Update(&player, id)
+	_, err = h.playersUC.Update(body, id)
 	if err != nil {
 		klog.Errorf("Error updating player: %v", err)
 	}
@@ -144,11 +135,9 @@ func (h playersHandlers) GetPlayer(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
-	// Find book by Id
-	var player *models.Player
-	var err error
+	player, err := h.playersUC.GetPlayer(id)
 
-	if player, err = h.playersUC.GetPlayer(id); err != nil {
+	if err != nil {
 		klog.Errorf("Error getting player: %v", err)
 	}
 

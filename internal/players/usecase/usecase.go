@@ -1,13 +1,10 @@
 package usecase
 
 import (
+	"encoding/json"
+
 	"fake.com/padel-api/internal/models"
 	"fake.com/padel-api/internal/players"
-	"k8s.io/klog/v2"
-)
-
-const (
-	basePrefix = "api-players:"
 )
 
 type playersUC struct {
@@ -18,17 +15,21 @@ func NewPlayersUseCase(playersRepo players.Repository) players.UseCase {
 	return &playersUC{playersRepo: playersRepo}
 }
 
-func (u *playersUC) Create(player *models.Player) (*models.Player, error) {
-	n, err := u.playersRepo.Create(player)
-	if err != nil {
-		klog.Errorf("Error creating player: %v", err)
-		return nil, err
-	}
+func (u *playersUC) Create(body []byte) (*models.Player, error) {
+	var playerJSON models.PlayerJSON
+	json.Unmarshal(body, &playerJSON)
 
-	return n, err
+	player := models.NewPlayer(playerJSON.Name, playerJSON.LastName, playerJSON.PlayerName)
+
+	return u.playersRepo.Create(player)
 }
 
-func (u *playersUC) Update(player *models.Player, playerID int) (*models.Player, error) {
+func (u *playersUC) Update(body []byte, playerID int) (*models.Player, error) {
+	var updatedPlayer models.PlayerJSON
+	json.Unmarshal(body, &updatedPlayer)
+
+	player := models.NewPlayer(updatedPlayer.Name, updatedPlayer.LastName, updatedPlayer.PlayerName)
+
 	return u.playersRepo.Update(player, playerID)
 }
 
