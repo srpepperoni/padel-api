@@ -24,7 +24,7 @@ type Result struct {
 	CoupleTwoSets []int
 }
 
-func NewMatch(coupleOne_1 int, coupleOne_2 int, coupleTwo_1 int, coupleTwo_2 int, status string, tournamentID int, result Result) Match {
+func NewMatch(coupleOne_1 int, coupleOne_2 int, coupleTwo_1 int, coupleTwo_2 int, status string, tournamentID int, result Result) *Match {
 	matchAttrs := map[string]interface{}{
 		"tournamentID": tournamentID,
 		"status":       status,
@@ -43,7 +43,7 @@ func NewMatch(coupleOne_1 int, coupleOne_2 int, coupleTwo_1 int, coupleTwo_2 int
 		},
 	}
 
-	return Match{Attrs: JSONMap(matchAttrs)}
+	return &Match{Attrs: JSONMap(matchAttrs)}
 }
 
 func (m *Match) GetCoupleOne() []int {

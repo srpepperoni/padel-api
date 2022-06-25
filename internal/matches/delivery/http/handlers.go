@@ -2,14 +2,13 @@ package http
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"k8s.io/klog/v2"
 	"net/http"
 	"strconv"
 
+	"k8s.io/klog/v2"
+
 	"fake.com/padel-api/internal/matches"
-	"fake.com/padel-api/internal/models"
 	"github.com/gorilla/mux"
 )
 
@@ -39,20 +38,7 @@ func (h matchesHandlers) Create(w http.ResponseWriter, r *http.Request) {
 		klog.Fatalln(err)
 	}
 
-	var matchJSON models.MatchJSON
-	json.Unmarshal(body, &matchJSON)
-
-	var result models.Result
-
-	if len(matchJSON.Result[0]) > len(matchJSON.Result[1]) {
-		result = models.Result{len(matchJSON.Result[0]), matchJSON.Result[0], matchJSON.Result[1]}
-	} else {
-		result = models.Result{len(matchJSON.Result[1]), matchJSON.Result[0], matchJSON.Result[1]}
-	}
-
-	match := models.NewMatch(matchJSON.CoupleOne[0], matchJSON.CoupleOne[1], matchJSON.CoupleTwo[0], matchJSON.CoupleTwo[1], matchJSON.Status, matchJSON.TournamentID, result)
-
-	if _, err = h.matchesUC.Create(&match); err != nil {
+	if _, err = h.matchesUC.Create(body); err != nil {
 		klog.Errorf("Error creating match: %v", err)
 	}
 
@@ -82,20 +68,9 @@ func (h matchesHandlers) Update(w http.ResponseWriter, r *http.Request) {
 		klog.Fatalln(err)
 	}
 
-	var matchJSON models.MatchJSON
-	json.Unmarshal(body, &matchJSON)
-
-	var result models.Result
-
-	if len(matchJSON.Result[0]) > len(matchJSON.Result[1]) {
-		result = models.Result{len(matchJSON.Result[0]), matchJSON.Result[0], matchJSON.Result[1]}
-	} else {
-		result = models.Result{len(matchJSON.Result[1]), matchJSON.Result[0], matchJSON.Result[1]}
+	if _, err = h.matchesUC.Update(body, id); err != nil {
+		klog.Errorf("Error updating match: %v", err)
 	}
-
-	updatedMatch := models.NewMatch(matchJSON.CoupleOne[0], matchJSON.CoupleOne[1], matchJSON.CoupleTwo[0], matchJSON.CoupleTwo[1], matchJSON.Status, matchJSON.TournamentID, result)
-
-	_, err = h.matchesUC.Update(&updatedMatch, id)
 
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -131,11 +106,10 @@ func (h matchesHandlers) Delete(w http.ResponseWriter, r *http.Request) {
 // @Success 201 {object} models.Match
 // @Router /matches [get]
 func (h matchesHandlers) GetMatches(w http.ResponseWriter, r *http.Request) {
-	var matches *[]models.Match
-	var err error
+	matches, err := h.matchesUC.GetMatches()
 
-	if matches, err = h.matchesUC.GetMatches(); err != nil {
-		fmt.Println(err)
+	if err != nil {
+		klog.Error(err)
 	}
 
 	w.Header().Add("Content-Type", "application/json")
@@ -156,12 +130,10 @@ func (h matchesHandlers) GetMatch(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
-	// Find book by Id
-	var player *models.Match
-	var err error
+	player, err := h.matchesUC.GetMatch(id)
 
-	if player, err = h.matchesUC.GetMatch(id); err != nil {
-		fmt.Println(err)
+	if err != nil {
+		klog.Error(err)
 	}
 
 	w.Header().Add("Content-Type", "application/json")
@@ -182,10 +154,9 @@ func (h matchesHandlers) GetMatchesByTournamentId(w http.ResponseWriter, r *http
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
-	var matches *[]models.Match
-	var err error
+	matches, err := h.matchesUC.GetMatchesByTournamentId(id)
 
-	if matches, err = h.matchesUC.GetMatchesByTournamentId(id); err != nil {
+	if err != nil {
 		klog.Errorf("Error getting matches by tournamentId: %v", err)
 	}
 

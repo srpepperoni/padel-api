@@ -3,9 +3,10 @@ package http
 import (
 	"encoding/json"
 	"io/ioutil"
-	"k8s.io/klog/v2"
 	"net/http"
 	"strconv"
+
+	"k8s.io/klog/v2"
 
 	"fake.com/padel-api/internal/models"
 	"fake.com/padel-api/internal/tournaments"
@@ -38,12 +39,7 @@ func (h tournamentsHandlers) Create(w http.ResponseWriter, r *http.Request) {
 		klog.Fatalln(err)
 	}
 
-	var tournamentJSON models.TournamentJSON
-	json.Unmarshal(body, &tournamentJSON)
-
-	tournament := models.NewTournament(tournamentJSON.Icon, tournamentJSON.Name, tournamentJSON.Description, tournamentJSON.Rounds, tournamentJSON.ActualRounds)
-
-	if _, err = h.tournamentsUC.Create(&tournament); err != nil {
+	if _, err = h.tournamentsUC.Create(body); err != nil {
 		klog.Errorf("Error creating tournament: %v", err)
 	}
 
@@ -73,12 +69,9 @@ func (h tournamentsHandlers) Update(w http.ResponseWriter, r *http.Request) {
 		klog.Errorf("Error reading body: %v", err)
 	}
 
-	var tournamentJSON models.TournamentJSON
-	json.Unmarshal(body, &tournamentJSON)
-
-	updatedTournament := models.NewTournament(tournamentJSON.Icon, tournamentJSON.Name, tournamentJSON.Description, tournamentJSON.Rounds, tournamentJSON.ActualRounds)
-
-	_, err = h.tournamentsUC.Update(&updatedTournament, id)
+	if _, err = h.tournamentsUC.Update(body, id); err != nil {
+		klog.Errorf("Error creating tournament: %v", err)
+	}
 
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

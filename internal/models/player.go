@@ -13,14 +13,14 @@ type Player struct {
 	Attrs    JSONMap
 }
 
-func NewPlayer(name string, lastName string, playerName string) Player {
+func NewPlayer(name string, lastName string, playerName string) *Player {
 	playerAttrs := map[string]interface{}{
 		"playerName": playerName,
 		"name":       name,
 		"lastName":   lastName,
 	}
 
-	return Player{Attrs: JSONMap(playerAttrs)}
+	return &Player{Attrs: JSONMap(playerAttrs)}
 }
 
 func (p *Player) GetName() string {
