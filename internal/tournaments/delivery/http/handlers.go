@@ -110,7 +110,7 @@ func (h tournamentsHandlers) Delete(w http.ResponseWriter, r *http.Request) {
 // @Success 201 {object} models.Tournament
 // @Router /tournaments [get]
 func (h tournamentsHandlers) GetTournaments(w http.ResponseWriter, r *http.Request) {
-	var tournaments *[]models.Tournament
+	var tournaments []models.Tournament
 	var err error
 
 	if tournaments, err = h.tournamentsUC.GetTournaments(); err != nil {
