@@ -2,12 +2,9 @@ package main
 
 import (
 	"k8s.io/klog/v2"
-	"net/http"
-	"os"
 
 	"fake.com/padel-api/config"
-	router "fake.com/padel-api/internal/server"
-	"fake.com/padel-api/pkg/utils"
+	"fake.com/padel-api/internal/server"
 )
 
 // @title Go padel-api
@@ -19,19 +16,9 @@ import (
 func main() {
 	klog.InitFlags(nil)
 	defer klog.Flush()
-	configPath := utils.GetConfigPath(os.Getenv("config"))
-	cfgFile, err := config.LoadConfig(configPath)
 
-	if err != nil {
-		klog.Fatal("LoadConfig: %v", err)
-	}
+	cfg, _ := config.GetConfig()
 
-	cfg, err := config.ParseConfig(cfgFile)
-
-	if err != nil {
-		klog.Fatalf("ParseConfig: %v", err)
-	}
-
-	klog.Infof("Server at %s", cfg.Server.Port)
-	klog.Fatal(http.ListenAndServe(cfg.Server.Port, router.NewRouter(cfg)))
+	r := server.NewRouter(cfg)
+	server.Run(cfg, r)
 }
