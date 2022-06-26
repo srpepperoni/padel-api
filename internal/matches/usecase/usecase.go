@@ -53,7 +53,7 @@ func (u *matchesUC) Delete(matchId int) error {
 	return u.matchesRepo.Delete(matchId)
 }
 
-func (u *matchesUC) GetMatches() (*[]models.Match, error) {
+func (u *matchesUC) GetMatches() ([]models.Match, error) {
 	return u.matchesRepo.GetMatches()
 }
 

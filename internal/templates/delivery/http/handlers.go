@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"fake.com/padel-api/internal/templates"
+	"k8s.io/klog/v2"
 )
 
 type templatesHandlers struct {
@@ -24,8 +25,8 @@ func (h templatesHandlers) GetTemplate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h templatesHandlers) GetTemplateNewUser(w http.ResponseWriter, r *http.Request) {
-	t, err := h.templatesUC.GetTemplateNewUser()
-	err = t.Execute(w, nil)
+	t, p, err := h.templatesUC.GetTemplateNewUser()
+	err = t.Execute(w, p)
 
 	if err != nil {
 		panic(err)
@@ -36,6 +37,16 @@ func (h templatesHandlers) GetTemplateNewMatch(w http.ResponseWriter, r *http.Re
 	t, matchesAndPlayers, err := h.templatesUC.GetTemplateNewMatch()
 
 	err = t.Execute(w, matchesAndPlayers)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (h templatesHandlers) GetTemplateNewTournament(w http.ResponseWriter, r *http.Request) {
+	t, Players, err := h.templatesUC.GetTemplateNewTournament()
+	klog.Info(Players)
+	err = t.Execute(w, Players)
 
 	if err != nil {
 		panic(err)

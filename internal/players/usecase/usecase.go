@@ -37,7 +37,7 @@ func (u *playersUC) Delete(playerID int) error {
 	return u.playersRepo.Delete(playerID)
 }
 
-func (u *playersUC) GetPlayers() (*[]models.Player, error) {
+func (u *playersUC) GetPlayers() ([]models.Player, error) {
 	return u.playersRepo.GetPlayers()
 }
 

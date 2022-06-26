@@ -58,3 +58,9 @@ func (p *Player) SetPlayerName(playerName string) {
 	attrs["playerName"] = playerName
 	p.Attrs = JSONMap(attrs)
 }
+
+func (p *Player) ToPlayerJSON() *PlayerJSON {
+	return &PlayerJSON{PlayerName: p.GetPlayerName(),
+		Name:     p.GetName(),
+		LastName: p.GetLastName()}
+}

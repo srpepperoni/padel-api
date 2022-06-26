@@ -8,7 +8,6 @@ import (
 
 	"k8s.io/klog/v2"
 
-	"fake.com/padel-api/internal/models"
 	"fake.com/padel-api/internal/players"
 	"github.com/gorilla/mux"
 )
@@ -110,10 +109,9 @@ func (h playersHandlers) Delete(w http.ResponseWriter, r *http.Request) {
 // @Success 201 {object} models.Player
 // @Router /players [get]
 func (h playersHandlers) GetPlayers(w http.ResponseWriter, r *http.Request) {
-	var players *[]models.Player
-	var err error
+	players, err := h.playersUC.GetPlayers()
 
-	if players, err = h.playersUC.GetPlayers(); err != nil {
+	if err != nil {
 		klog.Errorf("Error getting players: %v", err)
 	}
 
