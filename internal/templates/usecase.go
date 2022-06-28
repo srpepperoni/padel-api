@@ -9,6 +9,6 @@ import (
 type UseCase interface {
 	GetTemplate() (*template.Template, error)
 	GetTemplateNewUser() (*template.Template, []models.PlayerJSON, error)
-	GetTemplateNewMatch() (*template.Template, *models.MatchesAndPlayers, error)
+	GetTemplateNewMatch() (*template.Template, []models.MatchForTemplate, error)
 	GetTemplateNewTournament() (*template.Template, []models.PlayerJSON, error)
 }

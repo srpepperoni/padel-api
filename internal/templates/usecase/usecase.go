@@ -1,13 +1,13 @@
 package usecase
 
 import (
-	"fmt"
 	"text/template"
 
 	"fake.com/padel-api/internal/matches"
 	"fake.com/padel-api/internal/models"
 	"fake.com/padel-api/internal/players"
 	"fake.com/padel-api/internal/templates"
+	"fake.com/padel-api/internal/tournaments"
 	"k8s.io/klog/v2"
 )
 
@@ -16,12 +16,13 @@ const (
 )
 
 type templatesUC struct {
-	playersRepo players.Repository
-	matchesRepo matches.Repository
+	playersRepo     players.Repository
+	matchesRepo     matches.Repository
+	tournamentsRepo tournaments.Repository
 }
 
-func NewTemplatesUseCase(playersRepo players.Repository, matchesRepo matches.Repository) templates.UseCase {
-	return &templatesUC{playersRepo: playersRepo, matchesRepo: matchesRepo}
+func NewTemplatesUseCase(playersRepo players.Repository, matchesRepo matches.Repository, tournamentsRepo tournaments.Repository) templates.UseCase {
+	return &templatesUC{playersRepo: playersRepo, matchesRepo: matchesRepo, tournamentsRepo: tournamentsRepo}
 }
 
 func (u *templatesUC) GetTemplate() (*template.Template, error) {
@@ -45,27 +46,38 @@ func (u *templatesUC) GetTemplateNewUser() (*template.Template, []models.PlayerJ
 	return t, playerJson, nil
 }
 
-func (u *templatesUC) GetTemplateNewMatch() (*template.Template, *models.MatchesAndPlayers, error) {
+func (u *templatesUC) GetTemplateNewMatch() (*template.Template, []models.MatchForTemplate, error) {
+	var matchesForTemplate []models.MatchForTemplate
 
-	var players []models.Player
-	var matches []models.Match
-	var err error
+	matches, err := u.matchesRepo.GetMatches()
 
-	if players, err = u.playersRepo.GetPlayers(); err != nil {
-		fmt.Println(err)
+	if err != nil {
+		klog.Error(err)
 	}
 
-	u.matchesRepo.GetMatches()
+	for _, m := range matches {
+		matchAttrs := m.GetAttrs()
 
-	if matches, err = u.matchesRepo.GetMatches(); err != nil {
-		fmt.Println(err)
+		t, err := u.tournamentsRepo.GetTournament(matchAttrs.TournamentID)
+		if err != nil {
+			klog.Error(err)
+		}
+
+		tournamentAttrs := t.GetAttrs()
+
+		coupleOne, coupleTwo := getCouplesAsPlayerJSONArray(u, matchAttrs.CoupleOne, matchAttrs.CoupleTwo)
+
+		matchesForTemplate = append(matchesForTemplate, models.MatchForTemplate{TournamentName: tournamentAttrs.Name,
+			Status:    matchAttrs.Status,
+			Result:    matchAttrs.Result,
+			CoupleOne: coupleOne,
+			CoupleTwo: coupleTwo,
+		})
 	}
-
-	var matchesAndPlayers = models.MatchesAndPlayers{Players: players, Matches: matches}
 
 	t := template.Must(template.ParseFiles("./internal/templates/resources/new-match.html"))
 
-	return t, &matchesAndPlayers, nil
+	return t, matchesForTemplate, nil
 }
 
 func (u *templatesUC) GetTemplateNewTournament() (*template.Template, []models.PlayerJSON, error) {
@@ -83,4 +95,40 @@ func (u *templatesUC) GetTemplateNewTournament() (*template.Template, []models.P
 
 	t := template.Must(template.ParseFiles("./internal/templates/resources/new-tournaments.html"))
 	return t, playerJson, nil
+}
+
+func getCouplesAsPlayerJSONArray(u *templatesUC, coupleOne []int, coupleTwo []int) ([]models.PlayerJSON, []models.PlayerJSON) {
+
+	var CoupleOne []models.PlayerJSON
+	var CoupleTwo []models.PlayerJSON
+
+	if p, err := u.playersRepo.GetPlayer(coupleOne[0]); err != nil {
+		klog.Error(err)
+	} else {
+		playerAttrs := p.GetAttrs()
+		CoupleOne = append(CoupleOne, models.PlayerJSON{PlayerName: playerAttrs.PlayerName, Name: playerAttrs.Name, LastName: playerAttrs.LastName})
+	}
+
+	if p, err := u.playersRepo.GetPlayer(coupleOne[1]); err != nil {
+		klog.Error(err)
+	} else {
+		playerAttrs := p.GetAttrs()
+		CoupleOne = append(CoupleOne, models.PlayerJSON{PlayerName: playerAttrs.PlayerName, Name: playerAttrs.Name, LastName: playerAttrs.LastName})
+	}
+
+	if p, err := u.playersRepo.GetPlayer(coupleTwo[0]); err != nil {
+		klog.Error(err)
+	} else {
+		playerAttrs := p.GetAttrs()
+		CoupleTwo = append(CoupleOne, models.PlayerJSON{PlayerName: playerAttrs.PlayerName, Name: playerAttrs.Name, LastName: playerAttrs.LastName})
+	}
+
+	if p, err := u.playersRepo.GetPlayer(coupleTwo[1]); err != nil {
+		klog.Error(err)
+	} else {
+		playerAttrs := p.GetAttrs()
+		CoupleTwo = append(CoupleOne, models.PlayerJSON{PlayerName: playerAttrs.PlayerName, Name: playerAttrs.Name, LastName: playerAttrs.LastName})
+	}
+
+	return CoupleOne, CoupleTwo
 }

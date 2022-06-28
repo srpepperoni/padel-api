@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script type="text/javascript" src="/internal/templates/resources/js/new-match.js"></script>
-    <link rel="stylesheet" href="/internal/templates/resources/css/new-match.css">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/internal/templates/resources/css/new-match.css">
+    <link rel="stylesheet" href="/internal/templates/resources/js/new-match.js">
 </head> 
 <body>
     <nav class="navbar navbar-expand-lg bg-light">
@@ -28,9 +28,6 @@
                 <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="/new-tournaments">Tournaments</a>
                 </li>
-                <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-                </li>
             </ul>
             <form class="d-flex" role="search">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -39,51 +36,25 @@
             </div>
         </div>
     </nav>
-    <h1><a href="/">Padel APP</a></h1>
-	<h2>New Match</h2>
-	<p>Select four players for a match</p>
-    <table>
-        <tr>
-          <th>Player Name</th>
-          <th>Select</th>
-        </tr>
-        {{range .Players}}
-        <tr>
-          <td>{{.PlayerName}}</td>
-          <td><input class="inputPlayers" type="checkbox" id="{{.PlayerId}}" name="playerId" value="{{.PlayerId}}"></td>
-        </tr>
-        {{end}}
-    </table>
-    <input value="Create Match" type="submit" onclick="addMatch()">
     <br/>
-    <table>
-        <thead>
-            <tr>
-                <th colspan="6">Matches</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th>Player One</td>
-                <th>Player Two</td>
-                <th>Player Three</td>
-                <th>Player Four</td>
-                <th>Result</td>
-                <th></th>
-                <th></th>
-            </tr>
-            {{range .Matches}}
-            <tr>
-                <th>{{.PlayerOne}}</th>
-                <th>{{.PlayerTwo}}</th>
-                <th>{{.PlayerThree}}</th>
-                <th>{{.PlayerFour}}</th>
-                <th>{{.Result}}</th>
-                <th><input value="Update" type="submit" onclick="updateMatch('{{.}}')"></th>
-                <th><input value="Delete" type="submit" onclick="deleteMatch('{{.MatchId}}')"></th>
-            </tr>
-            {{end}}
-        </tbody>
-    </table>
+    <div class="d-flex justify-content-center">
+    <div class="row">
+      {{range .}}
+        <div class="col-sm">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">Match of {{.TournamentName}}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">Status: {{.Status}}</h6>
+              <p class="card-text">Couple One: {{range .CoupleOne}} {{.PlayerName}} {{end}}</p>
+              <p class="card-text">Couple Two: {{range .CoupleTwo}} {{.PlayerName}} {{end}}</p>
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="staticBackdrop">
+                Set Result
+              </button>
+            </div>
+          </div>
+        </div>
+      {{end}}
+      </div>
+    </div>
 </body>
 </html>

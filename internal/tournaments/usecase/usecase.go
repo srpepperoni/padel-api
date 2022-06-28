@@ -74,10 +74,11 @@ func createRound(u *tournamentsUC, tournament *models.Tournament) error {
 	var randomIndex int
 	var couples []models.PlayerT
 	var auxPlayers []models.PlayerT
-	matchesCount := len(tournament.GetPlayers()) / 4
+	tournamentAtrs := tournament.GetAttrs()
+	matchesCount := len(tournamentAtrs.Players) / 4
 
-	if tournament.GetActualRound() == 0 {
-		players := tournament.GetPlayers()
+	if tournamentAtrs.ActualRounds == 0 {
+		players := tournamentAtrs.Players
 		for i := 0; i < matchesCount; i++ {
 			couples = couples[:0]
 			for j := 0; j < 4; j++ {

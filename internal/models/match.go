@@ -1,5 +1,12 @@
 package models
 
+import (
+	"encoding/json"
+
+	"k8s.io/klog"
+)
+
+// Struct for Request from client side used for API
 type MatchJSON struct {
 	TournamentID int     `json:"tournamentId"`
 	Status       string  `json:"status"`
@@ -8,20 +15,10 @@ type MatchJSON struct {
 	Result       [][]int `json:"result"`
 }
 
+// Struct for Database
 type Match struct {
 	MatchId int `json:"matchId" gorm:"primaryKey;autoIncrement:true"`
 	Attrs   JSONMap
-}
-
-type MatchesAndPlayers struct {
-	Players []Player
-	Matches []Match
-}
-
-type Result struct {
-	SetsCounter   int
-	CoupleOneSets []int
-	CoupleTwoSets []int
 }
 
 func NewMatch(coupleOne_1 int, coupleOne_2 int, coupleTwo_1 int, coupleTwo_2 int, status string, tournamentID int, result Result) *Match {
@@ -46,52 +43,43 @@ func NewMatch(coupleOne_1 int, coupleOne_2 int, coupleTwo_1 int, coupleTwo_2 int
 	return &Match{Attrs: JSONMap(matchAttrs)}
 }
 
-func (m *Match) GetCoupleOne() []int {
-	attrs := m.Attrs
-	return attrs["coupleOne"].([]int)
+// Used to map attrs interface into usable object
+type MatchAttrs struct {
+	TournamentID int    `json:"tournamentID"`
+	Status       string `json:"status"`
+	CoupleOne    []int  `json:"coupleOne"`
+	CoupleTwo    []int  `json:"coupleTwo"`
+	Result       Result `json:"result"`
 }
 
-func (m *Match) GetCoupleTwo() []int {
-	attrs := m.Attrs
-	return attrs["coupleTwo"].([]int)
+// Used for templating injection into new-match.html
+type MatchForTemplate struct {
+	TournamentName string
+	Status         string
+	Result         Result
+	CoupleOne      []PlayerJSON
+	CoupleTwo      []PlayerJSON
 }
 
-func (m *Match) GetStatus() string {
-	attrs := m.Attrs
-	return attrs["status"].(string)
+type Result struct {
+	SetsCounter   int   `json:"tournamentID"`
+	CoupleOneSets []int `json:"coupleOneSets"`
+	CoupleTwoSets []int `json:"coupleTwoSets"`
 }
 
-func (m *Match) GetTournamentID() int {
-	attrs := m.Attrs
-	return attrs["tournamentID"].(int)
-}
+func (m *Match) GetAttrs() *MatchAttrs {
+	var matchAttrs MatchAttrs
+	j, err := m.Attrs.MarshalJSON()
 
-func (m *Match) GetResult() Result {
-	attrs := m.Attrs
-	return attrs["result"].(Result)
-}
+	if err != nil {
+		klog.Error(err)
+	}
 
-func (m *Match) SetCoupleOne(idPlayerA int, idPlayerB int) {
-	attrs := m.Attrs
-	attrs["coupleOne"] = []int{idPlayerA, idPlayerB}
-}
+	err = json.Unmarshal(j, &matchAttrs)
 
-func (m *Match) SetCoupleTwo(idPlayerA int, idPlayerB int) {
-	attrs := m.Attrs
-	attrs["coupleTwo"] = []int{idPlayerA, idPlayerB}
-}
+	if err != nil {
+		klog.Error(err)
+	}
 
-func (m *Match) SetStatus(status string) {
-	attrs := m.Attrs
-	attrs["status"] = status
-}
-
-func (m *Match) SetTournament(tournamentID int) {
-	attrs := m.Attrs
-	attrs["tournamentID"] = tournamentID
-}
-
-func (m *Match) SetResult(result Result) {
-	attrs := m.Attrs
-	attrs["result"] = result
+	return &matchAttrs
 }

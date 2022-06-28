@@ -34,9 +34,9 @@ func (h templatesHandlers) GetTemplateNewUser(w http.ResponseWriter, r *http.Req
 }
 
 func (h templatesHandlers) GetTemplateNewMatch(w http.ResponseWriter, r *http.Request) {
-	t, matchesAndPlayers, err := h.templatesUC.GetTemplateNewMatch()
+	t, matchesForTemplate, err := h.templatesUC.GetTemplateNewMatch()
 
-	err = t.Execute(w, matchesAndPlayers)
+	err = t.Execute(w, matchesForTemplate)
 
 	if err != nil {
 		panic(err)
