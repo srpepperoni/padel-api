@@ -70,3 +70,16 @@ func (t *Tournament) GetAttrs() *TournamentAttrs {
 
 	return &tournamentAttrs
 }
+
+func (t *Tournament) SetAttrs(attrs *TournamentAttrs) {
+	tournamentAttrs := map[string]interface{}{
+		"icon":        attrs.Icon,
+		"name":        attrs.Name,
+		"description": attrs.Description,
+		"rounds":      attrs.Rounds,
+		"actualRound": attrs.ActualRounds,
+		"players":     attrs.Players,
+	}
+
+	t.Attrs = JSONMap(tournamentAttrs)
+}

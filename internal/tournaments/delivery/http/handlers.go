@@ -147,3 +147,28 @@ func (h tournamentsHandlers) GetTournament(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(player)
 }
+
+// Next Round
+// @Summary Create next round of matches for next round
+// @Description Create next round of matches
+// @Tags Tournament
+// @Accept  json
+// @Param id path int true "Tournament ID"
+// @Produce  json
+// @Success 201 {object} models.Tournament
+// @Router /tournament/{id}/next-round [post]
+func (h tournamentsHandlers) NextRound(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	var message string
+	var err error
+
+	if message, err = h.tournamentsUC.NextRound(id); err != nil {
+		klog.Errorf("Error getting tournament: %v", err)
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(message)
+}

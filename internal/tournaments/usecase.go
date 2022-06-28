@@ -10,4 +10,5 @@ type UseCase interface {
 	Delete(tournamentId int) error
 	GetTournaments() ([]models.Tournament, error)
 	GetTournament(tournamentID int) (*models.Tournament, error)
+	NextRound(tournamentID int) (string, error)
 }

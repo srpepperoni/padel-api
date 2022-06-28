@@ -46,6 +46,19 @@ definitions:
       playerName:
         type: string
     type: object
+  models.Result:
+    properties:
+      coupleOneSets:
+        items:
+          type: integer
+        type: array
+      coupleTwoSets:
+        items:
+          type: integer
+        type: array
+      setsCounter:
+        type: integer
+    type: object
   models.Tournament:
     properties:
       attrs:
@@ -63,6 +76,10 @@ definitions:
         type: string
       name:
         type: string
+      players:
+        items:
+          type: integer
+        type: array
       rounds:
         type: integer
     type: object
@@ -162,6 +179,33 @@ paths:
           schema:
             $ref: '#/definitions/models.Match'
       summary: Update match
+      tags:
+      - Matches
+  /match/{id}/result:
+    post:
+      consumes:
+      - application/json
+      description: set match result and set status
+      parameters:
+      - description: Result object for API
+        in: body
+        name: tournament
+        required: true
+        schema:
+          $ref: '#/definitions/models.Result'
+      - description: Match ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Match'
+      summary: Set Match Result
       tags:
       - Matches
   /matches:
@@ -370,6 +414,27 @@ paths:
           schema:
             $ref: '#/definitions/models.Tournament'
       summary: Update tournament
+      tags:
+      - Tournament
+  /tournament/{id}/next-round:
+    post:
+      consumes:
+      - application/json
+      description: Create next round of matches
+      parameters:
+      - description: Tournament ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Tournament'
+      summary: Create next round of matches for next round
       tags:
       - Tournament
   /tournament/match/{id}:

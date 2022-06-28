@@ -164,3 +164,33 @@ func (h matchesHandlers) GetMatchesByTournamentId(w http.ResponseWriter, r *http
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(matches)
 }
+
+// Set Match Result
+// @Summary Set Match Result
+// @Description set match result and set status
+// @Tags Matches
+// @Accept  json
+// @Param tournament body models.Result true "Result object for API"
+// @Param id path int true "Match ID"
+// @Produce  json
+// @Success 201 {object} models.Match
+// @Router /match/{id}/result [post]
+func (h *matchesHandlers) SetResult(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+
+	if err != nil {
+		klog.Fatalln(err)
+	}
+
+	if err = h.matchesUC.SetResult(id, body); err != nil {
+		klog.Errorf("Error setting results match: %v", err)
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode("Result Setted")
+}
