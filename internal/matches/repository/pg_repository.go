@@ -54,7 +54,7 @@ func (r *matchesRepo) Delete(matchId int) error {
 	return nil
 }
 
-func (r *matchesRepo) GetMatches() (*[]models.Match, error) {
+func (r *matchesRepo) GetMatches() ([]models.Match, error) {
 	var matches []models.Match
 
 	if result := r.db.Find(&matches); result.Error != nil {
@@ -62,7 +62,7 @@ func (r *matchesRepo) GetMatches() (*[]models.Match, error) {
 		return nil, result.Error
 	}
 
-	return &matches, nil
+	return matches, nil
 }
 
 func (r *matchesRepo) GetMatch(matchID int) (*models.Match, error) {

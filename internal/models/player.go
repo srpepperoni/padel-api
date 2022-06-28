@@ -1,6 +1,10 @@
 package models
 
-import "fmt"
+import (
+	"encoding/json"
+
+	"k8s.io/klog"
+)
 
 type PlayerJSON struct {
 	PlayerName string `json:"playerName"`
@@ -13,6 +17,12 @@ type Player struct {
 	Attrs    JSONMap
 }
 
+type PlayerAttrs struct {
+	PlayerName string `json:"playerName"`
+	Name       string `json:"name"`
+	LastName   string `json:"lastName"`
+}
+
 func NewPlayer(name string, lastName string, playerName string) *Player {
 	playerAttrs := map[string]interface{}{
 		"playerName": playerName,
@@ -23,38 +33,26 @@ func NewPlayer(name string, lastName string, playerName string) *Player {
 	return &Player{Attrs: JSONMap(playerAttrs)}
 }
 
-func (p *Player) GetName() string {
-	attrs := p.Attrs
-	name := fmt.Sprint(attrs["name"])
-	return name
+func (p *Player) GetAttrs() *PlayerAttrs {
+	var playerAttrs PlayerAttrs
+	j, err := p.Attrs.MarshalJSON()
+
+	if err != nil {
+		klog.Error(err)
+	}
+
+	err = json.Unmarshal(j, &playerAttrs)
+
+	if err != nil {
+		klog.Error(err)
+	}
+
+	return &playerAttrs
 }
 
-func (p *Player) GetLastName() string {
-	attrs := p.Attrs
-	name := fmt.Sprint(attrs["lastName"])
-	return name
-}
-
-func (p *Player) GetPlayerName() string {
-	attrs := p.Attrs
-	name := fmt.Sprint(attrs["playerName"])
-	return name
-}
-
-func (p *Player) SetName(name string) {
-	attrs := p.Attrs
-	attrs["name"] = name
-	p.Attrs = JSONMap(attrs)
-}
-
-func (p *Player) SetLastName(lastName string) {
-	attrs := p.Attrs
-	attrs["lastName"] = lastName
-	p.Attrs = JSONMap(attrs)
-}
-
-func (p *Player) SetPlayerName(playerName string) {
-	attrs := p.Attrs
-	attrs["playerName"] = playerName
-	p.Attrs = JSONMap(attrs)
+func (p *Player) ToPlayerJSON() *PlayerJSON {
+	playerAttrs := p.GetAttrs()
+	return &PlayerJSON{PlayerName: playerAttrs.PlayerName,
+		Name:     playerAttrs.Name,
+		LastName: playerAttrs.LastName}
 }

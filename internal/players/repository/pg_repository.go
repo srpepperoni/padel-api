@@ -51,7 +51,7 @@ func (r *playersRepo) Delete(playerId int) error {
 	return nil
 }
 
-func (r *playersRepo) GetPlayers() (*[]models.Player, error) {
+func (r *playersRepo) GetPlayers() ([]models.Player, error) {
 	var players []models.Player
 
 	if result := r.db.Find(&players); result.Error != nil {
@@ -59,7 +59,7 @@ func (r *playersRepo) GetPlayers() (*[]models.Player, error) {
 		return nil, result.Error
 	}
 
-	return &players, nil
+	return players, nil
 }
 
 func (r *playersRepo) GetPlayer(playerID int) (*models.Player, error) {

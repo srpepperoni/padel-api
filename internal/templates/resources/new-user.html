@@ -1,10 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script type="text/javascript" src="/internal/templates/resources/js/new-player.js"></script>
+    <script type="text/javascript" src="/internal/templates/resources/js/new-user.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head> 
 <body>
-    <h1><a href="/">Padel APP</a></h1>
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Padel APP</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/new-user">Players</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/new-match">Matches</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/new-tournaments">Tournaments</a>
+                </li>
+            </ul>
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            </div>
+        </div>
+    </nav>
+
 	<h2>New User</h2>
 	<p>Insertar Usuario</p>
     <label for="fname">Username:</label>
@@ -14,5 +45,24 @@
     <label for="lname">Last name:</label>
     <input type="text" id="lastName" name="lastName"><br><br>
     <input value="Submit" type="submit" onclick="addUser()">
+    <div id="players-list">
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">UserName</th>
+                <th scope="col">Name</th>
+                <th scope="col">LastName</th>
+              </tr>
+            </thead>
+            <tbody>
+                {{range .}}
+              <tr>
+                <td  scope="row">{{.PlayerName}}</td>
+                <td>{{.Name}}</td>
+                <td>{{.LastName}}</td>
+              </tr>
+                {{end}}
+            </tbody>
+    </div>
 </body>
 </html>

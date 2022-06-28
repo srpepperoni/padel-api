@@ -1,55 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-      <script type="text/javascript" src="/internal/templates/resources/js/new-match.js"></script>
-      <link rel="stylesheet" href="/internal/templates/resources/css/new-match.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/internal/templates/resources/css/new-match.css">
+    <link rel="stylesheet" href="/internal/templates/resources/js/new-match.js">
 </head> 
 <body>
-    <h1><a href="/">Padel APP</a></h1>
-	<h2>New Match</h2>
-	<p>Select four players for a match</p>
-    <table>
-        <tr>
-          <th>Player Name</th>
-          <th>Select</th>
-        </tr>
-        {{range .Players}}
-        <tr>
-          <td>{{.PlayerName}}</td>
-          <td><input class="inputPlayers" type="checkbox" id="{{.PlayerId}}" name="playerId" value="{{.PlayerId}}"></td>
-        </tr>
-        {{end}}
-    </table>
-    <input value="Create Match" type="submit" onclick="addMatch()">
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Padel APP</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/new-user">Players</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/new-match">Matches</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/new-tournaments">Tournaments</a>
+                </li>
+            </ul>
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            </div>
+        </div>
+    </nav>
     <br/>
-    <table>
-        <thead>
-            <tr>
-                <th colspan="6">Matches</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th>Player One</td>
-                <th>Player Two</td>
-                <th>Player Three</td>
-                <th>Player Four</td>
-                <th>Result</td>
-                <th></th>
-                <th></th>
-            </tr>
-            {{range .Matches}}
-            <tr>
-                <th>{{.PlayerOne}}</th>
-                <th>{{.PlayerTwo}}</th>
-                <th>{{.PlayerThree}}</th>
-                <th>{{.PlayerFour}}</th>
-                <th>{{.Result}}</th>
-                <th><input value="Update" type="submit" onclick="updateMatch('{{.}}')"></th>
-                <th><input value="Delete" type="submit" onclick="deleteMatch('{{.MatchId}}')"></th>
-            </tr>
-            {{end}}
-        </tbody>
-    </table>
+    <div class="d-flex justify-content-center">
+    <div class="row">
+      {{range .}}
+        <div class="col-sm">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">Match of {{.TournamentName}}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">Status: {{.Status}}</h6>
+              <p class="card-text">Couple One: {{range .CoupleOne}} {{.PlayerName}} {{end}}</p>
+              <p class="card-text">Couple Two: {{range .CoupleTwo}} {{.PlayerName}} {{end}}</p>
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="staticBackdrop">
+                Set Result
+              </button>
+            </div>
+          </div>
+        </div>
+      {{end}}
+      </div>
+    </div>
 </body>
 </html>
