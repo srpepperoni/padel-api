@@ -5,14 +5,17 @@ import (
 
 	"fake.com/padel-api/internal/matches"
 	"fake.com/padel-api/internal/models"
+	"fake.com/padel-api/internal/tournaments"
+	"k8s.io/klog/v2"
 )
 
 type matchesUC struct {
-	matchesRepo matches.Repository
+	matchesRepo     matches.Repository
+	tournamentsRepo tournaments.Repository
 }
 
-func NewMatchUseCase(matchesRepo matches.Repository) matches.UseCase {
-	return &matchesUC{matchesRepo: matchesRepo}
+func NewMatchUseCase(matchesRepo matches.Repository, tournamentsRepo tournaments.Repository) matches.UseCase {
+	return &matchesUC{matchesRepo: matchesRepo, tournamentsRepo: tournamentsRepo}
 }
 
 func (u *matchesUC) Create(body []byte) (*models.Match, error) {
@@ -63,4 +66,69 @@ func (u *matchesUC) GetMatch(playerID int) (*models.Match, error) {
 
 func (u *matchesUC) GetMatchesByTournamentId(tournamentId int) (*[]models.Match, error) {
 	return u.matchesRepo.GetMatchesByTournamentId(tournamentId)
+}
+
+func (u *matchesUC) SetResult(matchId int, body []byte) error {
+	var result models.Result
+
+	json.Unmarshal(body, &result)
+
+	m, err := u.matchesRepo.GetMatch(matchId)
+
+	if err != nil {
+		klog.Error(err)
+	}
+
+	matchAttrs := m.GetAttrs()
+	matchAttrs.Result.CoupleOneSets = result.CoupleOneSets
+	matchAttrs.Result.CoupleTwoSets = result.CoupleTwoSets
+	matchAttrs.Result.SetsCounter = result.SetsCounter
+	matchAttrs.Status = "Played"
+	m.SetAttrs(matchAttrs)
+
+	m, err = u.matchesRepo.Update(m, m.MatchId)
+
+	if err != nil {
+		klog.Error(err)
+	}
+
+	t, err := u.tournamentsRepo.GetTournament(matchAttrs.TournamentID)
+
+	if err != nil {
+		klog.Error(err)
+	}
+
+	tournamentAttrs := t.GetAttrs()
+
+	for i, p := range tournamentAttrs.Players {
+		if p.PlayerID == matchAttrs.CoupleOne[0] || p.PlayerID == matchAttrs.CoupleOne[1] {
+			tournamentAttrs.Players[i].PlayerScore++
+			tournamentAttrs.Players[i].RoundsPlayed++
+		} else if p.PlayerID == matchAttrs.CoupleTwo[0] || p.PlayerID == matchAttrs.CoupleTwo[1] {
+			tournamentAttrs.Players[i].RoundsPlayed++
+		}
+	}
+
+	t.SetAttrs(tournamentAttrs)
+
+	t, err = u.tournamentsRepo.Update(t, t.TournamentID)
+
+	if err != nil {
+		klog.Error(err)
+	}
+
+	return nil
+}
+
+// Resturn true when CoupleOne wins or false when CoupleTwo wins
+func getCoupleWinner(result *models.Result) bool {
+	winner := [2]int{0, 0}
+	for i, s := range result.CoupleOneSets {
+		if result.CoupleTwoSets[i] < s {
+			winner[0]++
+		} else {
+			winner[1]++
+		}
+	}
+	return winner[0] > winner[1]
 }

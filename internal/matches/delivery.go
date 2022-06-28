@@ -11,4 +11,5 @@ type Handlers interface {
 	GetMatch(w http.ResponseWriter, r *http.Request)
 	GetMatches(w http.ResponseWriter, r *http.Request)
 	GetMatchesByTournamentId(w http.ResponseWriter, r *http.Request)
+	SetResult(w http.ResponseWriter, r *http.Request)
 }

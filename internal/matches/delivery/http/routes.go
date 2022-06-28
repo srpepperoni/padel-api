@@ -14,4 +14,5 @@ func MapMatchesRoutes(router *mux.Router, matchesHandlers matches.Handlers) {
 	router.HandleFunc("/matches", matchesHandlers.GetMatches).Methods(http.MethodGet)
 	router.HandleFunc("/match/{id}", matchesHandlers.GetMatch).Methods(http.MethodGet)
 	router.HandleFunc("/tournament/match/{id}", matchesHandlers.GetMatchesByTournamentId).Methods(http.MethodGet)
+	router.HandleFunc("/match/{id}/result", matchesHandlers.SetResult).Methods(http.MethodPost)
 }

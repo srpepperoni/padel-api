@@ -13,4 +13,5 @@ func MapTournamentsRoutes(router *mux.Router, tournamentsHandlers tournaments.Ha
 	router.HandleFunc("/tournament/{id}", tournamentsHandlers.Delete).Methods(http.MethodDelete)
 	router.HandleFunc("/tournaments", tournamentsHandlers.GetTournaments).Methods(http.MethodGet)
 	router.HandleFunc("/tournament/{id}", tournamentsHandlers.GetTournament).Methods(http.MethodGet)
+	router.HandleFunc("/tournament/{id}/next-round", tournamentsHandlers.NextRound).Methods(http.MethodPost)
 }

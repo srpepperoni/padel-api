@@ -11,4 +11,5 @@ type Repository interface {
 	GetMatches() ([]models.Match, error)
 	GetMatch(matchID int) (*models.Match, error)
 	GetMatchesByTournamentId(tournamentId int) (*[]models.Match, error)
+	GetMatchesByTournamentIdAndStatus(tournmentId int, status string) (*[]models.Match, error)
 }

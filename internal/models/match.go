@@ -62,7 +62,7 @@ type MatchForTemplate struct {
 }
 
 type Result struct {
-	SetsCounter   int   `json:"tournamentID"`
+	SetsCounter   int   `json:"setsCounter"`
 	CoupleOneSets []int `json:"coupleOneSets"`
 	CoupleTwoSets []int `json:"coupleTwoSets"`
 }
@@ -82,4 +82,16 @@ func (m *Match) GetAttrs() *MatchAttrs {
 	}
 
 	return &matchAttrs
+}
+
+func (m *Match) SetAttrs(attrs *MatchAttrs) {
+	matchAttrs := map[string]interface{}{
+		"tournamentID": attrs.TournamentID,
+		"status":       attrs.Status,
+		"coupleOne":    attrs.CoupleOne,
+		"coupleTwo":    attrs.CoupleTwo,
+		"result":       attrs.Result,
+	}
+
+	m.Attrs = JSONMap(matchAttrs)
 }
