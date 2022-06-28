@@ -155,6 +155,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/match/{id}/result": {
+            "post": {
+                "description": "set match result and set status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Matches"
+                ],
+                "summary": "Set Match Result",
+                "parameters": [
+                    {
+                        "description": "Result object for API",
+                        "name": "tournament",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Result"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Match ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Match"
+                        }
+                    }
+                }
+            }
+        },
         "/matches": {
             "get": {
                 "description": "get all matches",
@@ -503,6 +544,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/tournament/{id}/next-round": {
+            "post": {
+                "description": "Create next round of matches",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tournament"
+                ],
+                "summary": "Create next round of matches for next round",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Tournament ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Tournament"
+                        }
+                    }
+                }
+            }
+        },
         "/tournaments": {
             "get": {
                 "description": "update tournament",
@@ -600,6 +673,26 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Result": {
+            "type": "object",
+            "properties": {
+                "coupleOneSets": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "coupleTwoSets": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "setsCounter": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.Tournament": {
             "type": "object",
             "properties": {
@@ -625,6 +718,12 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "players": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "rounds": {
                     "type": "integer"
