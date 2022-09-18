@@ -47,7 +47,9 @@ func (u *matchesUC) Update(body []byte, matchID int) (*models.Match, error) {
 		result = models.Result{len(matchJSON.Result[1]), matchJSON.Result[0], matchJSON.Result[1]}
 	}
 
-	updatedMatch := models.NewMatch(matchJSON.CoupleOne[0], matchJSON.CoupleOne[1], matchJSON.CoupleTwo[0], matchJSON.CoupleTwo[1], matchJSON.Status, matchJSON.TournamentID, result)
+	oldMatch, _ := u.matchesRepo.GetMatch(matchID)
+
+	updatedMatch := models.NewMatch(matchJSON.CoupleOne[0], matchJSON.CoupleOne[1], matchJSON.CoupleTwo[0], matchJSON.CoupleTwo[1], matchJSON.Status, oldMatch.GetAttrs().TournamentID, result)
 
 	return u.matchesRepo.Update(updatedMatch, matchID)
 }
