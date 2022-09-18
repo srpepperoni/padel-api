@@ -84,6 +84,6 @@ func (r *matchesRepo) GetMatchesByTournamentId(tournmentId int) (*[]models.Match
 
 func (r *matchesRepo) GetMatchesByTournamentIdAndStatus(tournmentId int, status string) (*[]models.Match, error) {
 	matches := []models.Match{}
-	r.db.Find(&matches, datatypes.JSONQuery("attrs").Equals(tournmentId, "tournamentID").Equals(status, "status"))
+	r.db.Find(&matches, datatypes.JSONQuery("attrs").Equals(tournmentId, "tournamentID"), datatypes.JSONQuery("attrs").Equals(status, "status"))
 	return &matches, nil
 }

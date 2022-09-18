@@ -30,6 +30,7 @@ type TournamentAttrs struct {
 	Players      []PlayerT `json:"players"`
 }
 
+// Used to map player model in oturnament model
 type PlayerT struct {
 	PlayerID     int // ID Player
 	PlayerScore  int // Actual Player's score in this tournament
