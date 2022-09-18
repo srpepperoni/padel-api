@@ -6,6 +6,7 @@ import (
 	"fake.com/padel-api/internal/matches"
 	"fake.com/padel-api/internal/models"
 	"fake.com/padel-api/internal/tournaments"
+	"fake.com/padel-api/pkg/utils"
 	"k8s.io/klog/v2"
 )
 
@@ -48,8 +49,33 @@ func (u *matchesUC) Update(body []byte, matchID int) (*models.Match, error) {
 	}
 
 	oldMatch, _ := u.matchesRepo.GetMatch(matchID)
-
 	updatedMatch := models.NewMatch(matchJSON.CoupleOne[0], matchJSON.CoupleOne[1], matchJSON.CoupleTwo[0], matchJSON.CoupleTwo[1], matchJSON.Status, oldMatch.GetAttrs().TournamentID, result)
+
+	tournament, _ := u.tournamentsRepo.GetTournament(oldMatch.GetAttrs().TournamentID)
+	tournAttrs := tournament.GetAttrs()
+
+	if getCoupleWinner(&updatedMatch.GetAttrs().Result) {
+		for i, p := range tournAttrs.Players {
+			if utils.Contains(updatedMatch.GetAttrs().CoupleOne, p.PlayerID) {
+				tournAttrs.Players[i].PlayerScore = p.PlayerScore + 1
+				tournAttrs.Players[i].RoundsPlayed = p.RoundsPlayed + 1
+			} else if utils.Contains(updatedMatch.GetAttrs().CoupleTwo, p.PlayerID) {
+				tournAttrs.Players[i].RoundsPlayed = p.RoundsPlayed + 1
+			}
+		}
+	} else {
+		for i, p := range tournAttrs.Players {
+			if utils.Contains(updatedMatch.GetAttrs().CoupleTwo, p.PlayerID) {
+				tournAttrs.Players[i].PlayerScore = p.PlayerScore + 1
+				tournAttrs.Players[i].RoundsPlayed = p.RoundsPlayed + 1
+			} else if utils.Contains(updatedMatch.GetAttrs().CoupleOne, p.PlayerID) {
+				tournAttrs.Players[i].RoundsPlayed = p.RoundsPlayed + 1
+			}
+		}
+	}
+
+	tournament.SetAttrs(tournAttrs)
+	u.tournamentsRepo.Update(tournament, oldMatch.GetAttrs().TournamentID)
 
 	return u.matchesRepo.Update(updatedMatch, matchID)
 }
@@ -66,7 +92,7 @@ func (u *matchesUC) GetMatch(playerID int) (*models.Match, error) {
 	return u.matchesRepo.GetMatch(playerID)
 }
 
-func (u *matchesUC) GetMatchesByTournamentId(tournamentId int) (*[]models.Match, error) {
+func (u *matchesUC) GetMatchesByTournamentId(tournamentId int) ([]models.Match, error) {
 	return u.matchesRepo.GetMatchesByTournamentId(tournamentId)
 }
 

@@ -76,14 +76,14 @@ func (r *matchesRepo) GetMatch(matchID int) (*models.Match, error) {
 	return &match, nil
 }
 
-func (r *matchesRepo) GetMatchesByTournamentId(tournmentId int) (*[]models.Match, error) {
+func (r *matchesRepo) GetMatchesByTournamentId(tournmentId int) ([]models.Match, error) {
 	matches := []models.Match{}
 	r.db.Find(&matches, datatypes.JSONQuery("attrs").Equals(tournmentId, "tournamentID"))
-	return &matches, nil
+	return matches, nil
 }
 
-func (r *matchesRepo) GetMatchesByTournamentIdAndStatus(tournmentId int, status string) (*[]models.Match, error) {
+func (r *matchesRepo) GetMatchesByTournamentIdAndStatus(tournmentId int, status string) ([]models.Match, error) {
 	matches := []models.Match{}
 	r.db.Find(&matches, datatypes.JSONQuery("attrs").Equals(tournmentId, "tournamentID"), datatypes.JSONQuery("attrs").Equals(status, "status"))
-	return &matches, nil
+	return matches, nil
 }

@@ -13,3 +13,9 @@ go run cmd/main/main.go
 
 Enpoint: http://localhost:8000
 Swagger: http://localhost8000/swagger/index.html
+
+
+TODO
+
+Actualizar set de resultado
+Update match setea los valores de pareja en el body deberia coger solo referencia de matchid

@@ -49,6 +49,12 @@ func (u *tournamentsUC) Update(body []byte, tournamentID int) (*models.Tournamen
 }
 
 func (u *tournamentsUC) Delete(tournamentID int) error {
+	matches, _ := u.matchesRepo.GetMatchesByTournamentId(tournamentID)
+
+	for _, m := range matches {
+		u.matchesRepo.Delete(m.MatchId)
+	}
+
 	return u.tournamentsRepo.Delete(tournamentID)
 }
 
@@ -86,9 +92,9 @@ func (u *tournamentsUC) NextRound(tournamentID int) (string, error) {
 			return "Error resolving tournament matches", err
 		}
 
-		if len(*matchesPending) == 0 {
+		if len(matchesPending) == 0 {
 			createNewRound(u, t)
-			for _, m := range *matchesPlayed {
+			for _, m := range matchesPlayed {
 				mAttrs := m.GetAttrs()
 				mAttrs.Status = "Closed"
 				m.SetAttrs(mAttrs)
@@ -178,6 +184,7 @@ func createNewRound(u *tournamentsUC, t *models.Tournament) {
 	var randomIndexAux int
 	var limitLoop int
 	var firstArrayFinished = false
+	var p models.PlayerT
 	tAttrs := t.GetAttrs()
 	var couples []models.PlayerT
 	var auxPlayers []models.PlayerT
@@ -192,14 +199,10 @@ func createNewRound(u *tournamentsUC, t *models.Tournament) {
 			for j := 0; j < 4; j++ {
 				// Seteo de los jugadores sin mirar conflicto de parejas (son la primera indexacion de pareja, con lo que no hay restriccion)
 				if j == 0 || j == 2 {
-					randomIndex = rand.Intn(len(tAttrs.Players))
-					p := tAttrs.Players[randomIndex]
-					tAttrs.Players = append(tAttrs.Players[:randomIndex], tAttrs.Players[randomIndex+1:]...)
-					couples = append(couples, p)
+					p = getRandomPlayer(tAttrs.Players)
 				} else {
 					// Verify if that couple already play together and avoid that situation
-					randomIndex = rand.Intn(len(tAttrs.Players))
-					p := tAttrs.Players[randomIndex]
+					p = getRandomPlayer(tAttrs.Players)
 					for alreadyPlayTogether(couples[len(couples)-1].Couples, p.PlayerID) {
 						randomIndex++
 						if randomIndex > len(tAttrs.Players)-1 {
@@ -207,9 +210,9 @@ func createNewRound(u *tournamentsUC, t *models.Tournament) {
 						}
 						p = tAttrs.Players[randomIndex]
 					}
-					tAttrs.Players = append(tAttrs.Players[:randomIndex], tAttrs.Players[randomIndex+1:]...)
-					couples = append(couples, p)
 				}
+				tAttrs.Players = append(tAttrs.Players[:randomIndex], tAttrs.Players[randomIndex+1:]...)
+				couples = append(couples, p)
 			}
 			// create match: edit status playersT
 			createMatchAndEdit(u, couples, t.TournamentID)
@@ -224,9 +227,8 @@ func createNewRound(u *tournamentsUC, t *models.Tournament) {
 			for j := 0; j < 4; j++ {
 				if j == 0 || j == 2 {
 					if len(playersWithLessRoundsPlayed) > 0 {
-						randomIndex = rand.Intn(len(playersWithLessRoundsPlayed))
-						p := playersWithLessRoundsPlayed[randomIndex]
-						index := getIndexFromOriginPlayersSlice(tAttrs.Players, p)
+						p := getRandomPlayer(playersWithLessRoundsPlayed)
+						index := getIndexFromOriginPlayersSlice(tAttrs.Players, p) // TODO Verificar posibles errores aqui
 						if index < 0 {
 							klog.Error("Player not Found")
 							return
@@ -235,20 +237,18 @@ func createNewRound(u *tournamentsUC, t *models.Tournament) {
 						playersWithLessRoundsPlayed = append(playersWithLessRoundsPlayed[:randomIndex], playersWithLessRoundsPlayed[randomIndex+1:]...)
 						couples = append(couples, p)
 					} else {
-						randomIndex = rand.Intn(len(tAttrs.Players))
-						p := tAttrs.Players[randomIndex]
+						p := getRandomPlayer(tAttrs.Players)
 						tAttrs.Players = append(tAttrs.Players[:randomIndex], tAttrs.Players[randomIndex+1:]...)
 						couples = append(couples, p)
 					}
 				} else {
 					if len(playersWithLessRoundsPlayed) > 0 {
 						randomIndexAux = rand.Intn(len(playersWithLessRoundsPlayed))
-						randomIndex = rand.Intn(len(tAttrs.Players))
-						p := playersWithLessRoundsPlayed[randomIndex]
+						p := getRandomPlayer(playersWithLessRoundsPlayed)
 						limitLoop = randomIndexAux
 						firstArrayFinished = false
 						for alreadyPlayTogether(couples[len(couples)-1].Couples, p.PlayerID) {
-							if firstArrayFinished == false {
+							if !firstArrayFinished {
 								randomIndexAux++
 
 								if randomIndexAux > len(playersWithLessRoundsPlayed)-1 {
@@ -274,12 +274,9 @@ func createNewRound(u *tournamentsUC, t *models.Tournament) {
 						}
 
 						playersWithLessRoundsPlayed = append(playersWithLessRoundsPlayed[:randomIndexAux], playersWithLessRoundsPlayed[randomIndexAux+1:]...)
-						tAttrs.Players = append(tAttrs.Players[:randomIndex], tAttrs.Players[randomIndex+1:]...)
-						couples = append(couples, p)
 					} else {
 						// Verify if that couple already play together and avoid that situation
-						randomIndex = rand.Intn(len(tAttrs.Players))
-						p := tAttrs.Players[randomIndex]
+						p := getRandomPlayer(tAttrs.Players)
 						for alreadyPlayTogether(couples[len(couples)-1].Couples, p.PlayerID) {
 							randomIndex++
 							if randomIndex > len(tAttrs.Players)-1 {
@@ -287,9 +284,9 @@ func createNewRound(u *tournamentsUC, t *models.Tournament) {
 							}
 							p = tAttrs.Players[randomIndex]
 						}
-						tAttrs.Players = append(tAttrs.Players[:randomIndex], tAttrs.Players[randomIndex+1:]...)
-						couples = append(couples, p)
 					}
+					tAttrs.Players = append(tAttrs.Players[:randomIndex], tAttrs.Players[randomIndex+1:]...)
+					couples = append(couples, p)
 				}
 			}
 			// create match: edit status playersT
@@ -304,6 +301,12 @@ func createNewRound(u *tournamentsUC, t *models.Tournament) {
 
 	u.tournamentsRepo.Update(t, t.TournamentID)
 	klog.Info("Exiting: createNewRound()")
+}
+
+func getRandomPlayer(playersList []models.PlayerT) models.PlayerT {
+	randomIndex := rand.Intn(len(playersList))
+	p := playersList[randomIndex]
+	return p
 }
 
 func haveAllPlayersSameRounds(attrs *models.TournamentAttrs) bool {

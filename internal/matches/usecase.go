@@ -10,6 +10,6 @@ type UseCase interface {
 	Delete(matchID int) error
 	GetMatches() ([]models.Match, error)
 	GetMatch(matchID int) (*models.Match, error)
-	GetMatchesByTournamentId(tournamentId int) (*[]models.Match, error)
+	GetMatchesByTournamentId(tournamentId int) ([]models.Match, error)
 	SetResult(matchID int, body []byte) error
 }
