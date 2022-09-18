@@ -172,6 +172,7 @@ func createMatchAndEdit(u *tournamentsUC, couples []models.PlayerT, tournamentId
 }
 
 func createNewRound(u *tournamentsUC, t *models.Tournament) {
+	klog.Info("Entering: createNewRound()")
 	rand.Seed(time.Now().Unix())
 	var randomIndex int
 	var randomIndexAux int
@@ -302,6 +303,7 @@ func createNewRound(u *tournamentsUC, t *models.Tournament) {
 	t.SetAttrs(tAttrs)
 
 	u.tournamentsRepo.Update(t, t.TournamentID)
+	klog.Info("Exiting: createNewRound()")
 }
 
 func haveAllPlayersSameRounds(attrs *models.TournamentAttrs) bool {
