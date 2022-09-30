@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"math"
 
 	"k8s.io/klog"
 )
@@ -27,6 +28,7 @@ type TournamentAttrs struct {
 	Description  string    `json:"description"`
 	Rounds       int       `json:"rounds"`
 	ActualRounds int       `json:"actualRound"`
+	FullRounds   bool      `json:"fullRounds"`
 	Players      []PlayerT `json:"players"`
 }
 
@@ -43,12 +45,19 @@ func NewPlayerT(playerID int) *PlayerT {
 }
 
 func NewTournament(icon string, name string, description string, rounds int, actualRound int, players []PlayerT) *Tournament {
+	matchesCountRemainder := math.Mod(float64(len(players)), 4)
+	fullRounds := false
+	if matchesCountRemainder == 0 {
+		fullRounds = true
+	}
+
 	tournamentAttrs := map[string]interface{}{
 		"icon":        icon,
 		"name":        name,
 		"description": description,
 		"rounds":      rounds,
 		"actualRound": actualRound,
+		"fullRounds":  fullRounds,
 		"players":     players,
 	}
 
@@ -79,6 +88,7 @@ func (t *Tournament) SetAttrs(attrs *TournamentAttrs) {
 		"description": attrs.Description,
 		"rounds":      attrs.Rounds,
 		"actualRound": attrs.ActualRounds,
+		"fullRounds":  attrs.FullRounds,
 		"players":     attrs.Players,
 	}
 

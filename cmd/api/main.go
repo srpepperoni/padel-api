@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"k8s.io/klog/v2"
 
 	"fake.com/padel-api/config"
@@ -17,7 +19,7 @@ func main() {
 	klog.InitFlags(nil)
 	defer klog.Flush()
 
-	cfg, _ := config.GetConfig()
+	cfg, _ := config.GetConfig(os.Args[1])
 
 	r := server.NewRouter(cfg)
 	server.Run(cfg, r)

@@ -60,8 +60,13 @@ func ParseConfig(v *viper.Viper) (*Config, error) {
 	return &c, nil
 }
 
-func GetConfig() (*Config, error) {
-	configPath := utils.GetConfigPath(os.Getenv("config"))
+func GetConfig(debug string) (*Config, error) {
+	var configPath string
+	if debug != "debug" {
+		configPath = utils.GetConfigPath(os.Getenv("config"))
+	} else {
+		configPath = utils.GetConfigPath(debug)
+	}
 	cfgFile, err := LoadConfig(configPath)
 
 	if err != nil {

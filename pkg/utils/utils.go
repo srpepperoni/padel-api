@@ -4,6 +4,8 @@ package utils
 func GetConfigPath(configPath string) string {
 	if configPath == "docker" {
 		return "./config/config-docker"
+	} else if configPath == "debug" {
+		return "../../config/config-local"
 	}
 	return "./config/config-local"
 }

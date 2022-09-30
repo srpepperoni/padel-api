@@ -20,6 +20,7 @@ func NewMatchUseCase(matchesRepo matches.Repository, tournamentsRepo tournaments
 }
 
 func (u *matchesUC) Create(body []byte) (*models.Match, error) {
+	klog.Info("ENTERING # UseCaseMatch - Create")
 	var matchJSON models.MatchJSON
 	json.Unmarshal(body, &matchJSON)
 
@@ -33,10 +34,12 @@ func (u *matchesUC) Create(body []byte) (*models.Match, error) {
 
 	match := models.NewMatch(matchJSON.CoupleOne[0], matchJSON.CoupleOne[1], matchJSON.CoupleTwo[0], matchJSON.CoupleTwo[1], matchJSON.Status, matchJSON.TournamentID, result)
 
+	klog.Info("ENDING # UseCaseMatch - Create")
 	return u.matchesRepo.Create(match)
 }
 
 func (u *matchesUC) Update(body []byte, matchID int) (*models.Match, error) {
+	klog.Info("ENTERING # UseCaseMatch - Update")
 	var matchJSON models.MatchJSON
 	json.Unmarshal(body, &matchJSON)
 
@@ -49,7 +52,7 @@ func (u *matchesUC) Update(body []byte, matchID int) (*models.Match, error) {
 	}
 
 	oldMatch, _ := u.matchesRepo.GetMatch(matchID)
-	updatedMatch := models.NewMatch(matchJSON.CoupleOne[0], matchJSON.CoupleOne[1], matchJSON.CoupleTwo[0], matchJSON.CoupleTwo[1], matchJSON.Status, oldMatch.GetAttrs().TournamentID, result)
+	updatedMatch := models.NewMatch(oldMatch.GetAttrs().CoupleOne[0], oldMatch.GetAttrs().CoupleOne[1], oldMatch.GetAttrs().CoupleTwo[0], oldMatch.GetAttrs().CoupleTwo[1], matchJSON.Status, oldMatch.GetAttrs().TournamentID, result)
 
 	tournament, _ := u.tournamentsRepo.GetTournament(oldMatch.GetAttrs().TournamentID)
 	tournAttrs := tournament.GetAttrs()
@@ -77,6 +80,7 @@ func (u *matchesUC) Update(body []byte, matchID int) (*models.Match, error) {
 	tournament.SetAttrs(tournAttrs)
 	u.tournamentsRepo.Update(tournament, oldMatch.GetAttrs().TournamentID)
 
+	klog.Info("ENDING # UseCaseMatch - Update")
 	return u.matchesRepo.Update(updatedMatch, matchID)
 }
 
@@ -97,6 +101,7 @@ func (u *matchesUC) GetMatchesByTournamentId(tournamentId int) ([]models.Match, 
 }
 
 func (u *matchesUC) SetResult(matchId int, body []byte) error {
+	klog.Info("ENTERING # UseCaseMatch - SetResult")
 	var result models.Result
 
 	json.Unmarshal(body, &result)
@@ -145,11 +150,14 @@ func (u *matchesUC) SetResult(matchId int, body []byte) error {
 		klog.Error(err)
 	}
 
+	klog.Info("ENDING # UseCaseMatch - SetResult")
+
 	return nil
 }
 
 // Resturn true when CoupleOne wins or false when CoupleTwo wins
 func getCoupleWinner(result *models.Result) bool {
+	klog.Info("ENTERING # UseCaseMatch - getCoupleWinner")
 	winner := [2]int{0, 0}
 	for i, s := range result.CoupleOneSets {
 		if result.CoupleTwoSets[i] < s {
@@ -158,5 +166,7 @@ func getCoupleWinner(result *models.Result) bool {
 			winner[1]++
 		}
 	}
+
+	klog.Info("ENDING # UseCaseMatch - getCoupleWinner")
 	return winner[0] > winner[1]
 }
